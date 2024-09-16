@@ -50,7 +50,7 @@ anno_file_rna <- read_tsv(file = histology_file) %>%
   ) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_RNA" = "Kids_First_Biospecimen_ID") %>%
   unique() %>%
-  inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_RNA")
+  dplyr::inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_RNA")
 
 # combine Multi-modal clusters with methylation-derived subclass
 anno_file_methyl <- read_tsv(file = histology_file) %>%
@@ -66,11 +66,11 @@ anno_file_methyl <- read_tsv(file = histology_file) %>%
   ) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_Methyl" = "Kids_First_Biospecimen_ID") %>%
   unique() %>%
-  inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_Methyl")
+  dplyr::inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_Methyl")
 
 # combine both and create one standardized annotation file
 anno_file <- anno_file_rna %>%
-  inner_join(anno_file_methyl)
+  dplyr::inner_join(anno_file_methyl)
 anno_file$dkfz_v11_methylation_subclass <- gsub(", | ", "_", anno_file$dkfz_v11_methylation_subclass)
 
 # format survival data
@@ -95,7 +95,6 @@ pdf(
 )
 p <- ggsurvplot(
   fit,
-  palette = c("#00BFC4", "#F8766D", "#C77CFF", "#7CAE00"),
   title = "Survival stratified by RNA-derived molecular subtypes",
   data = surv_data,
   font.x = c(12),
@@ -118,8 +117,16 @@ dev.off()
 surv_data$dkfz_v11_methylation_subclass <- factor(surv_data$dkfz_v11_methylation_subclass, levels = sort(unique(
   surv_data$dkfz_v11_methylation_subclass
 )))
+
+surv_data_temp <- surv_data %>%
+  dplyr::group_by(dkfz_v11_methylation_subclass) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::filter(n >= 5) %>%
+  dplyr::mutate(dkfz_v11_methylation_subclass = factor(dkfz_v11_methylation_subclass
+  ))
+
 fit <- survival::survfit(Surv(as.numeric(OS_days), OS_status) ~ dkfz_v11_methylation_subclass,
-                         data = surv_data)
+                         data = surv_data_temp)
 pdf(
   file = file.path(plots_dir, "survival_methyl_subtype_v11.pdf"),
   height = 8,
@@ -160,8 +167,16 @@ dev.off()
 surv_data$dkfz_v12_methylation_subclass <- factor(surv_data$dkfz_v12_methylation_subclass, levels = sort(unique(
   surv_data$dkfz_v12_methylation_subclass
 )))
+
+surv_data_temp <- surv_data %>%
+  dplyr::group_by(dkfz_v12_methylation_subclass) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::filter(n >= 5) %>%
+  dplyr::mutate(dkfz_v12_methylation_subclass = factor(dkfz_v12_methylation_subclass
+  ))
+
 fit <- survival::survfit(Surv(as.numeric(OS_days), OS_status) ~ dkfz_v12_methylation_subclass,
-                         data = surv_data)
+                         data = surv_data_temp)
 pdf(
   file = file.path(plots_dir, "survival_methyl_subtype_v12.pdf"),
   height = 9,
@@ -256,159 +271,6 @@ p <- ggsurvplot(
 print(p)
 dev.off()
 
-# survival curves: Group 3
-plots <- list()
-survdata_tmp <- surv_data %>% filter(molecular_subtype == "MB, Group3", mm_cluster %in% c(9, 10))
-survdata_tmp$mm_cluster <- factor(survdata_tmp$mm_cluster, levels = sort(as.numeric(unique(
-  survdata_tmp$mm_cluster
-))))
-fit <- survival::survfit(Surv(as.numeric(OS_days), OS_status) ~ mm_cluster, data = survdata_tmp)
-plots[[1]] <- ggsurvplot(
-  fit,
-  palette = c("#21abcd", "#3a56ca"),
-  title = unique(survdata_tmp$molecular_subtype),
-  data = survdata_tmp,
-  font.x = c(12),
-  font.tickslab = c(12),
-  font.y = c(12),
-  pval = TRUE,
-  ggtheme = ggpubr::theme_pubr(),
-  tables.theme = custom_table_theme,
-  legend.lab = gsub(".*=", "", summary(fit)$table %>% rownames()),
-  ylab = "Overall survival probability",
-  legend.title = "Multimodal Cluster",
-  legend = "top",
-  legend.direction = "right",
-  break.x.by = 500
-) %++%
-  guides(colour = guide_legend(nrow = 1))
-
-# survival curves: Group 3/4
-survdata_tmp <- surv_data %>% filter(molecular_subtype %in% c("MB, Group4", "MB, Group 3"),
-                                     mm_cluster %in% c(1, 3, 7))
-survdata_tmp$mm_cluster <- factor(survdata_tmp$mm_cluster, levels = sort(as.numeric(unique(
-  survdata_tmp$mm_cluster
-))))
-fit <- survival::survfit(Surv(as.numeric(OS_days), OS_status) ~ mm_cluster, data = survdata_tmp)
-plots[[2]] <- ggsurvplot(
-  fit,
-  palette = c("#d227da", "#ff1493", "#228b22"),
-  title = "MB, Group 3/4",
-  data = survdata_tmp,
-  font.x = c(12),
-  font.tickslab = c(12),
-  font.y = c(12),
-  pval = TRUE,
-  ggtheme = ggpubr::theme_pubr(),
-  tables.theme = custom_table_theme,
-  legend.lab = gsub(".*=", "", summary(fit)$table %>% rownames()),
-  ylab = "Overall survival probability",
-  legend.title = "Multimodal Cluster",
-  legend = "top",
-  legend.direction = "right",
-  break.x.by = 500
-) %++%
-  guides(colour = guide_legend(nrow = 1))
-
-# survival curves: Group 4
-survdata_tmp <- surv_data %>% filter(molecular_subtype == "MB, Group4", mm_cluster %in% c(6, 8, 12, 13))
-survdata_tmp$mm_cluster <- factor(survdata_tmp$mm_cluster, levels = sort(as.numeric(unique(
-  survdata_tmp$mm_cluster
-))))
-fit <- survival::survfit(Surv(as.numeric(OS_days), OS_status) ~ mm_cluster, data = survdata_tmp)
-plots[[3]] <- ggsurvplot(
-  fit,
-  palette = c("#ffe135", "#967117", "#ff8c00", "#ff4040"),
-  title = unique(survdata_tmp$molecular_subtype),
-  data = survdata_tmp,
-  font.x = c(12),
-  font.tickslab = c(12),
-  font.y = c(12),
-  pval = TRUE,
-  ggtheme = ggpubr::theme_pubr(),
-  tables.theme = custom_table_theme,
-  legend.lab = gsub(".*=", "", summary(fit)$table %>% rownames()),
-  ylab = "Overall survival probability",
-  legend.title = "Multimodal Cluster",
-  legend = "top",
-  legend.direction = "right",
-  break.x.by = 500
-) %++%
-  guides(colour = guide_legend(nrow = 1))
-
-# survival curves: SHH
-survdata_tmp <- surv_data %>% filter(molecular_subtype == "MB, SHH", mm_cluster %in% c(2, 5))
-survdata_tmp$mm_cluster <- factor(survdata_tmp$mm_cluster, levels = sort(as.numeric(unique(
-  survdata_tmp$mm_cluster
-))))
-fit <- survival::survfit(Surv(as.numeric(OS_days), OS_status) ~ mm_cluster, data = survdata_tmp)
-plots[[4]] <- ggsurvplot(
-  fit,
-  palette = c("#beaed4", "#8a2be2"),
-  title = unique(survdata_tmp$molecular_subtype),
-  data = survdata_tmp,
-  font.x = c(12),
-  font.tickslab = c(12),
-  font.y = c(12),
-  pval = TRUE,
-  ggtheme = ggpubr::theme_pubr(),
-  tables.theme = custom_table_theme,
-  legend.lab = gsub(".*=", "", summary(fit)$table %>% rownames()),
-  ylab = "Overall survival probability",
-  legend.title = "Multimodal Cluster",
-  legend = "top",
-  legend.direction = "right",
-  break.x.by = 500
-) %++%
-  guides(colour = guide_legend(nrow = 1))
-
-combined_plots <- arrange_ggsurvplots(x = plots, ncol = 2, nrow = 2)
-ggsave(
-  filename = file.path(plots_dir, "survival_mm_clusters_per_subtype.pdf"),
-  plot = combined_plots,
-  width = 10,
-  height = 10
-)
-
-# survival curves: SHH
-survdata_tmp <- surv_data %>% filter(mm_cluster %in% c(6, 8, 12, 13)) %>%
-  dplyr::mutate(mm_cluster_comb = case_when(
-    mm_cluster %in% c(6, 12) ~ 'MOC_6_12',
-    mm_cluster %in% c(8, 13) ~ 'MOC_8_13'
-  )) %>%
-  dplyr::mutate(mm_cluster_comb = as.factor(mm_cluster_comb))
-survdata_tmp$mm_cluster_comb <- factor(survdata_tmp$mm_cluster_comb, levels = sort(unique(
-  survdata_tmp$mm_cluster_comb
-)))
-fit <- survival::survfit(Surv(as.numeric(OS_days), OS_status) ~ mm_cluster_comb, data = survdata_tmp)
-plots[[4]] <- ggsurvplot(
-  fit,
-  palette = c("#beaed4", "#8a2be2"),
-  title = unique(survdata_tmp$molecular_subtype),
-  data = survdata_tmp,
-  font.x = c(12),
-  font.tickslab = c(12),
-  font.y = c(12),
-  pval = TRUE,
-  ggtheme = ggpubr::theme_pubr(),
-  tables.theme = custom_table_theme,
-  legend.lab = gsub(".*=", "", summary(fit)$table %>% rownames()),
-  ylab = "Overall survival probability",
-  legend.title = "Multimodal Cluster",
-  legend = "top",
-  legend.direction = "right",
-  break.x.by = 500
-) %++%
-  guides(colour = guide_legend(nrow = 1))
-
-combined_plots <- arrange_ggsurvplots(x = plots, ncol = 2, nrow = 2)
-ggsave(
-  filename = file.path(plots_dir, "survival_mm_clusters_per_subtype.pdf"),
-  plot = combined_plots,
-  width = 10,
-  height = 10
-)
-
 # OS
 surv_data_tmp <- anno_file %>%
   dplyr::filter(!is.na(OS_days)) %>%
@@ -443,3 +305,4 @@ t1 <- tbl_regression(res_cox, exponentiate = TRUE)
 t1 %>%
   as_gt() %>%
   gt::gtsave(filename = file.path(plots_dir, 'coxph_summary_OS.pdf'))
+

@@ -11,17 +11,16 @@ script_directory="$(perl -e 'use File::Basename;
 cd "$script_directory" || exit
  
 # Define directory and input files
-data_subset="../data_preparation/data"
-histology_file="${data_subset}/histologies.tsv"
-data_prep_results="../data_preparation/results"
-count_file="${data_prep_results}/rna_data.tsv"
-cnv_file="${data_prep_results}/cnv_data.tsv"
-snv_file="${data_prep_results}/snv_data.tsv"
-methyl_file="${data_prep_results}/methyl_data.tsv"
-splice_file="${data_prep_results}/splice_data.tsv"
+data_dir="../../data"
+count_file="${data_dir}/rna_data.tsv"
+cnv_file="${data_dir}/cnv_data.tsv"
+snv_file="${data_dir}/snv_data.tsv"
+methyl_file="${data_dir}/methyl_data.tsv"
+splice_file="${data_dir}/splice_data.tsv"
 cluster_file="../intNMF/results/intnmf_clusters.tsv"
 output_dir="results/intnmf"
 plots_dir="plots/intnmf"
+histology_file="${data_dir}/v15/histologies.tsv"
 
 # compare multi-modal derived clusters with molecular subtypes or subgroups
 Rscript --vanilla 01-compare-classes.R \
@@ -35,10 +34,6 @@ Rscript --vanilla 02-heatmaps.R \
 --histology_file $histology_file \
 --rna_file $count_file \
 --feature_scores_rna "../intNMF/results/feature_scores/feature_scores_rna.tsv" \
---cnv_file $cnv_file \
---feature_scores_cnv "../intNMF/results/feature_scores/feature_scores_cnv.tsv" \
---snv_file $snv_file \
---feature_scores_snv "../intNMF/results/feature_scores/feature_scores_snv.tsv" \
 --methyl_file $methyl_file \
 --feature_scores_methyl "../intNMF/results/feature_scores/feature_scores_methyl.tsv" \
 --splice_file $splice_file \
@@ -50,9 +45,6 @@ Rscript --vanilla 03-bubble-plots.R \
 --cluster_file $cluster_file \
 --histology_file $histology_file \
 --plots_dir "${plots_dir}/bubble_plots"
-
-# for sankey plots and efs survival plots, we need EFS_event_type which is present in v15 
-histology_file="../../data/v15/histologies.tsv"
 
 # survival curves of Multi-modal clusters, RNA- and Methylation-derived subgroups (OS)
 Rscript --vanilla 04-survival-curves_os.R \

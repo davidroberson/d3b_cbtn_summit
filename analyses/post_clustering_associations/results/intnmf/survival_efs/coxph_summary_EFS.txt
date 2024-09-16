@@ -1,0 +1,37 @@
+Call:
+survival::coxph(formula = Surv(EFS_days, EFS_status) ~ mm_cluster + 
+    age_at_diagnosis_days, data = surv_data_tmp)
+
+  n= 130, number of events= 123 
+
+                            coef  exp(coef)   se(coef)      z Pr(>|z|)   
+mm_cluster2           -1.299e-01  8.782e-01  4.533e-01 -0.287  0.77443   
+mm_cluster3            4.411e-01  1.554e+00  3.766e-01  1.171  0.24146   
+mm_cluster4            5.933e-01  1.810e+00  5.349e-01  1.109  0.26736   
+mm_cluster5            8.678e-01  2.382e+00  3.753e-01  2.312  0.02075 * 
+mm_cluster6            4.546e-02  1.047e+00  4.250e-01  0.107  0.91481   
+mm_cluster7           -1.331e-01  8.754e-01  4.405e-01 -0.302  0.76259   
+mm_cluster8            2.408e-01  1.272e+00  4.084e-01  0.590  0.55545   
+mm_cluster9            6.089e-02  1.063e+00  3.796e-01  0.160  0.87257   
+mm_cluster10          -3.541e-01  7.018e-01  3.745e-01 -0.945  0.34443   
+age_at_diagnosis_days -1.459e-04  9.999e-01  4.775e-05 -3.055  0.00225 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                      exp(coef) exp(-coef) lower .95 upper .95
+mm_cluster2              0.8782     1.1387    0.3612    2.1352
+mm_cluster3              1.5545     0.6433    0.7430    3.2521
+mm_cluster4              1.8099     0.5525    0.6344    5.1639
+mm_cluster5              2.3815     0.4199    1.1414    4.9691
+mm_cluster6              1.0465     0.9556    0.4550    2.4072
+mm_cluster7              0.8754     1.1423    0.3692    2.0758
+mm_cluster8              1.2723     0.7860    0.5714    2.8329
+mm_cluster9              1.0628     0.9409    0.5051    2.2364
+mm_cluster10             0.7018     1.4249    0.3368    1.4622
+age_at_diagnosis_days    0.9999     1.0001    0.9998    0.9999
+
+Concordance= 0.63  (se = 0.026 )
+Likelihood ratio test= 25.31  on 10 df,   p=0.005
+Wald test            = 25.87  on 10 df,   p=0.004
+Score (logrank) test = 27.35  on 10 df,   p=0.002
+

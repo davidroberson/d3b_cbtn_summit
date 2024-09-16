@@ -11,7 +11,6 @@ option_list <- list(
   make_option(c("--expr_mat"), type = "character", help = "expression data matrix, preferably counts (.rds) "),
   make_option(c("--gtf_file"), type = "character", help = "gencode gtf file"),
   make_option(c("--cluster_file"), type = "character", help = "path to cluster annotation file"),
-  make_option(c("--kegg_medicus_file"), type = "character", help = "path to KEGG MEDICUS pathway file (.gmt)"),
   make_option(c("--results_dir"), type = "character", help = "path to results directory"),
   make_option(c("--plots_dir"), type = "character", help = "path to plots directory")
 )
@@ -30,7 +29,7 @@ dir.create(plots_dir, showWarnings = F, recursive = T)
 gencode_gtf <- rtracklayer::import(con = opt$gtf_file) %>%
   as.data.frame() %>%
   dplyr::select(gene_id, gene_name, gene_type) %>%
-  filter(gene_type == "protein_coding") %>%
+  dplyr::filter(gene_type == "protein_coding") %>%
   unique()
 
 # count data
@@ -112,18 +111,6 @@ for (i in 1:length(clusters)) {
     prefix = prefix,
     plots_dir = file.path(plots_dir, "reactome"),
     results_dir = file.path(results_dir, "reactome")
-  )
-  
-  # pathway enrichment using KEGG MEDICUS
-  kegg_medicus_pathways <- clusterProfiler::read.gmt(gmtfile = opt$kegg_medicus_file)
-  perform_enrichment_gsea(
-    diffexpr_res = deseq_output,
-    pathways = kegg_medicus_pathways,
-    minGSSize = 10,
-    maxGSSize = 500,
-    prefix = prefix,
-    plots_dir = file.path(plots_dir, "kegg_medicus"),
-    results_dir = file.path(results_dir, "kegg_medicus")
   )
   
   # pathway enrichment using HALLMARK

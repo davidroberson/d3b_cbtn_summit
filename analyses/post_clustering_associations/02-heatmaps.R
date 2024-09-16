@@ -49,13 +49,13 @@ dir.create(plots_dir, showWarnings = F, recursive = T)
 feature_scores_rna <- read_tsv(opt$feature_scores_rna)
 feature_scores_rna <- feature_scores_rna %>%
   as.data.frame() %>%
-  rownames_to_column("cluster") %>%
-  gather(key = "feature", value = "value", -c(cluster)) %>%
-  group_by(cluster) %>%
+  tibble::rownames_to_column("cluster") %>%
+  tidyr::gather(key = "feature", value = "value", -c(cluster)) %>%
+  dplyr::group_by(cluster) %>%
   dplyr::arrange(desc(value)) %>%
-  slice_head(n = 10) %>%
-  spread(key = "feature", value = "value", fill = 0) %>%
-  column_to_rownames("cluster")
+  dplyr::slice_head(n = 10) %>%
+  tidyr::spread(key = "feature", value = "value", fill = 0) %>%
+  tibble::column_to_rownames("cluster")
 p1 <- pheatmap::pheatmap(
   mat = t(feature_scores_rna),
   fontsize = 5,
@@ -71,13 +71,13 @@ p1 <- pheatmap::pheatmap(
 feature_scores_methyl <- read_tsv(opt$feature_scores_methyl)
 feature_scores_methyl <- feature_scores_methyl %>%
   as.data.frame() %>%
-  rownames_to_column("cluster") %>%
-  gather(key = "feature", value = "value", -c(cluster)) %>%
-  group_by(cluster) %>%
+  tibble::rownames_to_column("cluster") %>%
+  tidyr::gather(key = "feature", value = "value", -c(cluster)) %>%
+  dplyr::group_by(cluster) %>%
   dplyr::arrange(desc(value)) %>%
-  slice_head(n = 10) %>%
-  spread(key = "feature", value = "value", fill = 0) %>%
-  column_to_rownames("cluster")
+  dplyr::slice_head(n = 10) %>%
+  tidyr::spread(key = "feature", value = "value", fill = 0) %>%
+  tibble::column_to_rownames("cluster")
 p2 <- pheatmap::pheatmap(
   mat = t(feature_scores_methyl),
   fontsize = 5,
@@ -89,62 +89,18 @@ p2 <- pheatmap::pheatmap(
   main = paste0("Methylation Data\nTop 10 features per cluster")
 )
 
-# snv
-feature_scores_snv <- read_tsv(opt$feature_scores_snv)
-feature_scores_snv <- feature_scores_snv %>%
-  as.data.frame() %>%
-  rownames_to_column("cluster") %>%
-  gather(key = "feature", value = "value", -c(cluster)) %>%
-  group_by(cluster) %>%
-  dplyr::arrange(desc(value)) %>%
-  slice_head(n = 10) %>%
-  spread(key = "feature", value = "value", fill = 0) %>%
-  column_to_rownames("cluster")
-p3 <- pheatmap::pheatmap(
-  mat = t(feature_scores_snv),
-  fontsize = 5,
-  cellwidth = 8,
-  cellheight = 5,
-  scale = "none",
-  angle_col = 0,
-  silent = T,
-  main = paste0("Mutation Data\nTop 10 features per cluster")
-)
-
-# cnv
-feature_scores_cnv <- read_tsv(opt$feature_scores_cnv)
-feature_scores_cnv <- feature_scores_cnv %>%
-  as.data.frame() %>%
-  rownames_to_column("cluster") %>%
-  gather(key = "feature", value = "value", -c(cluster)) %>%
-  group_by(cluster) %>%
-  dplyr::arrange(desc(value)) %>%
-  slice_head(n = 10) %>%
-  spread(key = "feature", value = "value", fill = 0) %>%
-  column_to_rownames("cluster")
-p4 <- pheatmap::pheatmap(
-  mat = t(feature_scores_cnv),
-  fontsize = 5,
-  cellwidth = 8,
-  cellheight = 5,
-  scale = "row",
-  angle_col = 0,
-  silent = T,
-  main = paste0("CNV Data\nTop 10 features per cluster")
-)
-
 # splicing
 feature_scores_splice <- read_tsv(opt$feature_scores_splice)
 feature_scores_splice <- feature_scores_splice %>%
   as.data.frame() %>%
-  rownames_to_column("cluster") %>%
-  gather(key = "feature", value = "value", -c(cluster)) %>%
-  group_by(cluster) %>%
+  tibble::rownames_to_column("cluster") %>%
+  tidyr::gather(key = "feature", value = "value", -c(cluster)) %>%
+  dplyr::group_by(cluster) %>%
   dplyr::arrange(desc(value)) %>%
-  slice_head(n = 10) %>%
-  spread(key = "feature", value = "value", fill = 0) %>%
-  column_to_rownames("cluster")
-p5 <- pheatmap::pheatmap(
+  dplyr::slice_head(n = 10) %>%
+  tidyr::spread(key = "feature", value = "value", fill = 0) %>%
+  tibble::column_to_rownames("cluster")
+p3 <- pheatmap::pheatmap(
   mat = t(feature_scores_splice),
   fontsize = 5,
   cellwidth = 8,
@@ -162,7 +118,7 @@ pdf(
   height = 23
 )
 grid.arrange(arrangeGrob(
-  grobs = list(p1$gtable, p2$gtable, p3$gtable, p4$gtable, p5$gtable),
+  grobs = list(p1$gtable, p2$gtable, p3$gtable),
   ncol = 3
 ))
 dev.off()
@@ -178,10 +134,10 @@ anno_file_rna <- read_tsv(file = histology_file) %>%
   dplyr::select(Kids_First_Biospecimen_ID, molecular_subtype, CNS_region) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_RNA" = "Kids_First_Biospecimen_ID") %>%
   unique() %>%
-  inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_RNA")
+  dplyr::inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_RNA")
 
 # combine Multi-modal clusters with methylation-derived subclass
-anno_file_methyl <- read_tsv(file = histology_file) %>%
+anno_file_methyl <- read_tsv(file = opt$histology_file) %>%
   dplyr::select(
     Kids_First_Biospecimen_ID,
     dkfz_v11_methylation_subclass,
@@ -189,11 +145,11 @@ anno_file_methyl <- read_tsv(file = histology_file) %>%
   ) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_Methyl" = "Kids_First_Biospecimen_ID") %>%
   unique() %>%
-  inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_Methyl")
+  dplyr::inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_Methyl")
 
 # combine both and create one standardized annotation file
 anno_file <- anno_file_rna %>%
-  inner_join(anno_file_methyl)
+  dplyr::inner_join(anno_file_methyl)
 anno_file$dkfz_v11_methylation_subclass <- gsub(", | ", "_", anno_file$dkfz_v11_methylation_subclass)
 
 ############################# generate sample-level heatmaps ############################
@@ -230,7 +186,7 @@ annots_colors <- list(
 
 # arrange
 annots <- anno_file %>%
-  column_to_rownames('sample_id') %>%
+  tibble::column_to_rownames('sample_id') %>%
   dplyr::select(
     dkfz_v12_methylation_subclass,
     dkfz_v11_methylation_subclass,
@@ -295,53 +251,9 @@ p2 <- methyl_data[rownames(annots), ] %>%
 p2 <- p2 %>% as.ggplot
 print(p2)
 
-# snv
-snv_data <- read_tsv(opt$snv_file) %>% column_to_rownames()
-p3 <- snv_data[rownames(annots), ] %>%
-  dplyr::select(colnames(feature_scores_snv)) %>%
-  t() %>%
-  pheatmap::pheatmap(
-    annotation_col = annots,
-    annotation_colors = annots_colors,
-    fontsize = 5,
-    cellwidth = 2,
-    cellheight = 5,
-    show_colnames = F,
-    cluster_cols = F,
-    cluster_rows = T,
-    color = colorpanel(2, low = "grey95", high = "black"),
-    legend_breaks = seq(0, 1, by = 1),
-    silent = T,
-    main = paste0("Mutation Data\nTop 10 features per cluster")
-  )
-p3 <- p3 %>% as.ggplot
-print(p3)
-
-# cnv
-cnv_data <- read_tsv(opt$cnv_file) %>% column_to_rownames()
-p4 <- cnv_data[rownames(annots), ] %>%
-  dplyr::select(colnames(feature_scores_cnv)) %>%
-  t() %>%
-  pheatmap::pheatmap(
-    annotation_col = annots,
-    annotation_colors = annots_colors,
-    fontsize = 5,
-    cellwidth = 2,
-    cellheight = 5,
-    show_colnames = F,
-    cluster_cols = F,
-    cluster_rows = T,
-    scale = "row",
-    color = bluered(256),
-    silent = T,
-    main = paste0("CNV Data\nTop 10 features per cluster")
-  )
-p4 <- p4 %>% as.ggplot
-print(p4)
-
 # splicing
 splice_data <- read_tsv(opt$splice_file) %>% column_to_rownames()
-p5 <- splice_data[rownames(annots), ] %>%
+p3 <- splice_data[rownames(annots), ] %>%
   dplyr::select(colnames(feature_scores_splice)) %>%
   t() %>%
   pheatmap::pheatmap(
@@ -358,6 +270,6 @@ p5 <- splice_data[rownames(annots), ] %>%
     silent = T,
     main = paste0("Splice Data\nTop 10 features per cluster")
   )
-p5 <- p5 %>% as.ggplot
-print(p5)
+p3 <- p3 %>% as.ggplot
+print(p3)
 dev.off()

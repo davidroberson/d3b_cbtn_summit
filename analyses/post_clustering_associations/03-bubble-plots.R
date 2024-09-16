@@ -29,7 +29,7 @@ anno_file_rna <- read_tsv(file = histology_file) %>%
   dplyr::select(Kids_First_Biospecimen_ID, molecular_subtype, CNS_region) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_RNA" = "Kids_First_Biospecimen_ID") %>%
   unique() %>%
-  inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_RNA")
+  dplyr::inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_RNA")
 
 # combine Multi-modal clusters with methylation-derived subclass
 anno_file_methyl <- read_tsv(file = histology_file) %>%
@@ -40,11 +40,11 @@ anno_file_methyl <- read_tsv(file = histology_file) %>%
   ) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_Methyl" = "Kids_First_Biospecimen_ID") %>%
   unique() %>%
-  inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_Methyl")
+  dplyr::inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_Methyl")
 
 # combine both and create one standardized annotation file
 anno_file <- anno_file_rna %>%
-  inner_join(anno_file_methyl)
+  dplyr::inner_join(anno_file_methyl)
 anno_file$dkfz_v11_methylation_subclass <- gsub(", | ", "_", anno_file$dkfz_v11_methylation_subclass)
 
 ############################# generate balloon and corrplots ############################
@@ -92,15 +92,15 @@ dev.off()
 # 3) generate balloon plot with at least 5 samples in a group
 # Multi-modal clusters vs methylation-derived dkfz_v11_methylation_subclass
 dat <- anno_file %>%
-  filter(!is.na(dkfz_v11_methylation_subclass)) %>%
-  group_by(dkfz_v11_methylation_subclass, mm_cluster)  %>%
-  summarise(n = n()) %>%
-  mutate(nmax = max(n)) %>%
-  filter(nmax >= 5) %>%
+  dplyr::filter(!is.na(dkfz_v11_methylation_subclass)) %>%
+  dplyr::group_by(dkfz_v11_methylation_subclass, mm_cluster)  %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::mutate(nmax = max(n)) %>%
+  dplyr::filter(nmax >= 5) %>%
   ungroup() %>%
   dplyr::select(-c(nmax)) %>%
-  spread(key = mm_cluster, value = n, fill = 0) %>%
-  column_to_rownames("dkfz_v11_methylation_subclass")
+  tidyr::spread(key = mm_cluster, value = n, fill = 0) %>%
+  tibble::column_to_rownames("dkfz_v11_methylation_subclass")
 pdf(
   file = file.path(
     plots_dir,
@@ -138,15 +138,15 @@ dev.off()
 # 3) generate balloon plot with at least 5 samples in a group
 # Multi-modal clusters vs methylation-derived dkfz_v12_methylation_subclass
 dat <- anno_file %>%
-  filter(!is.na(dkfz_v12_methylation_subclass)) %>%
-  group_by(dkfz_v12_methylation_subclass, mm_cluster)  %>%
-  summarise(n = n()) %>%
-  mutate(nmax = max(n)) %>%
-  filter(nmax >= 5) %>%
+  dplyr::filter(!is.na(dkfz_v12_methylation_subclass)) %>%
+  dplyr::group_by(dkfz_v12_methylation_subclass, mm_cluster)  %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::mutate(nmax = max(n)) %>%
+  dplyr::filter(nmax >= 5) %>%
   ungroup() %>%
   dplyr::select(-c(nmax)) %>%
-  spread(key = mm_cluster, value = n, fill = 0) %>%
-  column_to_rownames("dkfz_v12_methylation_subclass")
+  tidyr::spread(key = mm_cluster, value = n, fill = 0) %>%
+  tibble::column_to_rownames("dkfz_v12_methylation_subclass")
 pdf(
   file = file.path(
     plots_dir,

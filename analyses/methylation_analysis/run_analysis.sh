@@ -15,7 +15,7 @@ data_subset="../data_preparation/data"
 count_file="${data_subset}/gene-counts-rsem-expected_count-collapsed.rds"
 methyl_m_file="${data_subset}/methyl-m-values.rds" 
 cluster_file="../intNMF/results/intnmf_clusters.tsv"
-methyl_annot_file="../../data/v12/infinium.gencode.v39.probe.annotations.tsv.gz"
+methyl_annot_file="../../data/v15/infinium.gencode.v39.probe.annotations.tsv.gz"
 
 # 1) limma analysis to identify differentially expressed CpG sites
 Rscript --vanilla 01-limma_analysis.R \
@@ -43,7 +43,7 @@ Rscript --vanilla 02-dms_gsameth_analysis.R \
 --output_dir "results/dms_gsameth_output/hallmark" \
 --plots_dir "plots/dms_gsameth_output/hallmark"
 
-# 2) methreg analysis on differentially expressed CpG sites from (genebody + promoter) obtained from 01-limma_analysis.R
+# 2) methreg analysis on differentially methylated CpG sites from (genebody + promoter) obtained from 01-limma_analysis.R
 Rscript --vanilla 02-methreg_analysis.R \
 --methyl_mat $methyl_m_file \
 --cluster_file $cluster_file \

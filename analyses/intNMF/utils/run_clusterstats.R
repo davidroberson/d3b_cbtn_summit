@@ -16,20 +16,17 @@ run_clusterstats <- function(dat, output_dir, k_value) {
   # do this for each cluster
   # run Nonnegative Matrix Factorization of Multiple data using Nonnegative Alternating Least Square
   nmf_fname <- file.path(output_dir, "intnmf_fit_all.rds")
-  max_k <- nmf.opt.k(dat = dat, 
-            n.runs = 30, 
-            n.fold = 5, 
-            k.range = 2:15, 
-            result = TRUE,
-            make.plot = TRUE, 
-            progress = TRUE, 
-            st.count = 10, 
-            maxiter = 100, 
-            wt=if(is.list(dat)) 
-              rep(1,length(dat)) else 1)
+  
+  
+  # Normalize by each omics type's frobenius norm
+  count_data_norm <- count_data / norm(as.matrix(count_data), type="F")
+  methyl_data_norm <- methyl_data / norm(as.matrix(methyl_data), type="F")
+  splice_data_norm <- splice_data / norm(as.matrix(splice_data), type="F")
+  snv_data_norm <- snv_data / norm(as.matrix(snv_data), type="F")
+  cnv_data_norm <- cnv_data/ norm(as.matrix(cnv_data), type = "F")
 
-  nmf_output <- nmf.mnnals(dat = dat, 
-                           k = max_k, 
+  nmf_output <- nmf.mnnals(dat = list(count_data_norm, methyl_data_norm, splice_data_norm), 
+                           k = k_value, 
                            maxiter = 200, 
                            st.count = 20, 
                            n.ini = 30, 
@@ -38,12 +35,12 @@ run_clusterstats <- function(dat, output_dir, k_value) {
                            wt=if(is.list(dat)) rep(1,length(dat)) else 1)
   
   # add modality names instead of H1, H2... for better clarity in downstream plotting
-  names(nmf_output[[max_k]]$H) <- names(dat)
+  names(nmf_output$H) <- names(dat)
   
   # save best fit to file
-  saveRDS(object = nmf_output[[max_k]],
+  saveRDS(object = nmf_output,
           file = file.path(output_dir, "intnmf_best_fit.rds"))
   
   # return the nmf output corresponding to the most optimal k for downstream analyses
-  return(nmf_output[[max_k]])
+  return(nmf_output)
 }

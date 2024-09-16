@@ -42,7 +42,7 @@ anno_file_methyl <- read_tsv(file = opt$histology_file) %>%
 
 # combine both and create one standardized annotation file
 anno_file <- anno_file_rna %>%
-  inner_join(anno_file_methyl)
+  dplyr::inner_join(anno_file_methyl)
 anno_file$dkfz_v11_methylation_subclass <- gsub(", | ", "_", anno_file$dkfz_v11_methylation_subclass)
 
 # 1) adjusted rand index between various subtypes and Multi-modal derived clusters

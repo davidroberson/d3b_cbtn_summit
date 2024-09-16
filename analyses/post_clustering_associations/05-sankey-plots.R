@@ -30,7 +30,7 @@ anno_file_rna <- read_tsv(file = histology_file) %>%
                 EFS_event_type) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_RNA" = "Kids_First_Biospecimen_ID") %>%
   unique() %>%
-  inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_RNA")
+  dplyr::inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_RNA")
 
 # combine multi-modal clusters with methylation-derived subclass
 anno_file_methyl <- read_tsv(file = histology_file) %>%
@@ -41,11 +41,11 @@ anno_file_methyl <- read_tsv(file = histology_file) %>%
   ) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_Methyl" = "Kids_First_Biospecimen_ID") %>%
   unique() %>%
-  inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_Methyl")
+  dplyr::inner_join(mm_clusters, by = "Kids_First_Biospecimen_ID_Methyl")
 
 # combine both and create one standardized annotation file
 anno_file <- anno_file_rna %>%
-  inner_join(anno_file_methyl)
+  dplyr::inner_join(anno_file_methyl)
 anno_file$dkfz_v11_methylation_subclass <- gsub(", | ", "_", anno_file$dkfz_v11_methylation_subclass)
 
 ############################# generate sankey plots ############################
@@ -54,10 +54,10 @@ anno_file$dkfz_v11_methylation_subclass <- gsub(", | ", "_", anno_file$dkfz_v11_
 # 1) sankey plot of molecular_subtype vs multi-modal cluster
 # part 1 is links between molecular_subtype and multi-modal cluster
 df <- anno_file %>%
-  filter(!is.na(molecular_subtype)) %>%
-  group_by(molecular_subtype, mm_cluster) %>%
-  mutate(n = n()) %>%
-  arrange(molecular_subtype, mm_cluster, n) %>%
+  dplyr::filter(!is.na(molecular_subtype)) %>%
+  dplyr::group_by(molecular_subtype, mm_cluster) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::arrange(molecular_subtype, mm_cluster, n) %>%
   dplyr::select(molecular_subtype, mm_cluster, n) %>%
   unique()
 
@@ -77,9 +77,9 @@ nodes$name
 
 # part 2 is links between multi-modal cluster and CNS_region
 df = anno_file %>%
-  group_by(molecular_subtype, mm_cluster, CNS_region) %>%
-  mutate(n = n()) %>%
-  arrange(molecular_subtype, mm_cluster, CNS_region, n) %>%
+  dplyr::group_by(molecular_subtype, mm_cluster, CNS_region) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::arrange(molecular_subtype, mm_cluster, CNS_region, n) %>%
   dplyr::select(molecular_subtype, mm_cluster, CNS_region, n) %>%
   unique()
 
@@ -150,10 +150,10 @@ webshot(
 # 2) sankey plot of dkfz_v12_methylation_subclass vs multi-modal cluster
 # part 1 is links between dkfz_v12_methylation_subclass and multi-modal cluster
 df <- anno_file %>%
-  filter(!is.na(dkfz_v12_methylation_subclass)) %>%
-  group_by(dkfz_v12_methylation_subclass, mm_cluster) %>%
-  mutate(n = n()) %>%
-  arrange(dkfz_v12_methylation_subclass, mm_cluster, n) %>%
+  dplyr::filter(!is.na(dkfz_v12_methylation_subclass)) %>%
+  dplyr::group_by(dkfz_v12_methylation_subclass, mm_cluster) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::arrange(dkfz_v12_methylation_subclass, mm_cluster, n) %>%
   dplyr::select(dkfz_v12_methylation_subclass, mm_cluster, n) %>%
   unique()
 
@@ -173,9 +173,9 @@ nodes$name
 
 # part 2 is links between multi-modal cluster and CNS_region
 df <- anno_file %>%
-  group_by(dkfz_v12_methylation_subclass, mm_cluster, CNS_region) %>%
-  mutate(n = n()) %>%
-  arrange(dkfz_v12_methylation_subclass, mm_cluster, CNS_region, n) %>%
+  dplyr::group_by(dkfz_v12_methylation_subclass, mm_cluster, CNS_region) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::arrange(dkfz_v12_methylation_subclass, mm_cluster, CNS_region, n) %>%
   dplyr::select(dkfz_v12_methylation_subclass, mm_cluster, CNS_region, n) %>%
   unique()
 
@@ -354,10 +354,10 @@ webshot(
 # 2) sankey plot of dkfz_v12_methylation_subclass vs intNMF cluster
 # part 1 is links between dkfz_v12_methylation_subclass and intNMF cluster
 df <- anno_file %>%
-  filter(!is.na(dkfz_v12_methylation_subclass)) %>%
-  group_by(dkfz_v12_methylation_subclass, mm_cluster) %>%
-  mutate(n = n()) %>%
-  arrange(dkfz_v12_methylation_subclass, mm_cluster, n) %>%
+  dplyr::filter(!is.na(dkfz_v12_methylation_subclass)) %>%
+  dplyr::group_by(dkfz_v12_methylation_subclass, mm_cluster) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::arrange(dkfz_v12_methylation_subclass, mm_cluster, n) %>%
   dplyr::select(dkfz_v12_methylation_subclass, mm_cluster, n) %>%
   unique()
 
@@ -377,9 +377,9 @@ nodes$name
 
 # part 2 is links between intNMF cluster and EFS_event_type
 df <- anno_file %>%
-  group_by(dkfz_v12_methylation_subclass, mm_cluster, EFS_event_type) %>%
-  mutate(n = n()) %>%
-  arrange(dkfz_v12_methylation_subclass, mm_cluster, EFS_event_type, n) %>%
+  dplyr::group_by(dkfz_v12_methylation_subclass, mm_cluster, EFS_event_type) %>%
+  dplyr::mutate(n = n()) %>%
+  dplyr::arrange(dkfz_v12_methylation_subclass, mm_cluster, EFS_event_type, n) %>%
   dplyr::select(dkfz_v12_methylation_subclass, mm_cluster, EFS_event_type, n) %>%
   unique()
 
