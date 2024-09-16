@@ -21,7 +21,7 @@ methyl_b_file="${data_dir}/v15/methyl-beta-values.rds"
 functional_sites_splice_file="${data_dir}/v15/splice_events_pan_cancer_functional_filter.rds" # filtered to functional sites by Ammar Naqvi using v12
 
 # prepare input files for multi-modal clustering
-Rscript --vanilla 03-multi-modal-clustering-prepare-data.R \
+Rscript --vanilla 01-multi-modal-clustering-prepare-data.R \
 --histology_file $histology_file \
 --short_histology $short_histology \
 --cancer_genes $cancer_genes \
@@ -31,4 +31,4 @@ Rscript --vanilla 03-multi-modal-clustering-prepare-data.R \
 --methyl_file $methyl_b_file \
 --splice_file $functional_sites_splice_file \
 --gtf_file $gtf_file \
---output_dir "results"
+--output_dir ${data_dir}
