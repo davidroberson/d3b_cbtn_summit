@@ -55,15 +55,6 @@ expr_mat <- expr_mat %>%
   dplyr::select(mm_clusters$sample_id)
 stopifnot(identical(colnames(expr_mat), mm_clusters$sample_id))
 
-# use DCGA to filter out low count, low variance features
-expr_mat <- DGCA::filterGenes(
-  inputMat = expr_mat,
-  filterTypes = c("central", "dispersion"),
-  filterDispersionType = "cv",
-  filterDispersionPercentile = 0.2,
-  sequential = TRUE
-)
-
 # use a for-loop
 clusters <- unique(mm_clusters$mm_cluster)
 output_df <- data.frame()

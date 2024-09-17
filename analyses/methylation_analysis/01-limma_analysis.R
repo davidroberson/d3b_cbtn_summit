@@ -21,10 +21,15 @@ output_dir <- opt$output_dir
 dir.create(output_dir, showWarnings = F, recursive = T)
 
 # read m-values
-methyl_m_values_full <- readRDS(opt$methyl_mat)
+methyl_m_values_full <- readRDS(opt$methyl_mat) %>%
+  dplyr::mutate('Probe_ID' = make.names(Probe_ID)) %>%
+  unique(by = 'Probe_ID') %>%
+  tibble::column_to_rownames('Probe_ID')
 
 # read annotation
-methyl_annot_full <- data.table::fread(opt$methyl_annot)
+methyl_annot_full <- data.table::fread(opt$methyl_annot) %>%
+  dplyr::mutate('Probe_ID' = make.names(Probe_ID)) %>%
+  unique(by = 'Probe_ID')
 
 # create generalized function for gene feature analysis
 run_analysis <- function(methyl_m_values_full,
@@ -33,7 +38,7 @@ run_analysis <- function(methyl_m_values_full,
                          prefix) {
   # filter only to gene feature using probe annotation file
   methyl_annot <- methyl_annot_full %>%
-    filter(Gene_Feature %in% gene_feature_filter) %>%
+    dplyr::filter(Gene_Feature %in% gene_feature_filter) %>%
     unique()
   methyl_m_values <- methyl_m_values_full %>%
     filter(rownames(methyl_m_values_full) %in% methyl_annot$Probe_ID)
@@ -78,8 +83,8 @@ run_analysis <- function(methyl_m_values_full,
     # differentially expressed probes
     toptable_output <- limma::topTable(fit.reduced, coef = 2, n = Inf)
     sigCpGs <- toptable_output %>%
-      filter(adj.P.Val < 0.05) %>%
-      mutate(cluster = clusters[i]) %>%
+      dplyr::filter(adj.P.Val < 0.05) %>%
+      dplyr::mutate(cluster = clusters[i]) %>%
       rownames_to_column("probes")
     print(head(sigCpGs))
     

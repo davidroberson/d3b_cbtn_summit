@@ -10,12 +10,14 @@ script_directory="$(perl -e 'use File::Basename;
   print dirname(abs_path(@ARGV[0]));' -- "$0")"
 cd "$script_directory" || exit
 
+echo "R_MAX_VSIZE=100Gb" > .Renviron
+
 # Define directory and input files
-data_subset="../data_preparation/data"
-count_file="${data_subset}/gene-counts-rsem-expected_count-collapsed.rds"
-methyl_m_file="${data_subset}/methyl-m-values.rds" 
+data_dir="/sbgenomics/project-files/opc-v15"
+count_file="${data_dir}/v15/gene-counts-rsem-expected_count-collapsed.rds"
+methyl_m_file="${data_dir}/v15/methyl-m-values.rds" 
 cluster_file="../intNMF/results/intnmf_clusters.tsv"
-methyl_annot_file="../../data/v15/infinium.gencode.v39.probe.annotations.tsv.gz"
+methyl_annot_file="${data_dir}/v15/infinium.gencode.v39.probe.annotations.tsv.gz"
 
 # 1) limma analysis to identify differentially expressed CpG sites
 Rscript --vanilla 01-limma_analysis.R \

@@ -11,7 +11,7 @@ script_directory="$(perl -e 'use File::Basename;
 cd "$script_directory" || exit
  
 # Define directory and input files
-data_dir="../../data"
+data_dir="/sbgenomics/project-files/opc-v15"
 gtf_file="${data_dir}/v15/gencode.v39.primary_assembly.annotation.gtf.gz"
 count_file="${data_dir}/v15/gene-counts-rsem-expected_count-collapsed.rds"
 cluster_file="../intNMF/results/intnmf_clusters.tsv"
