@@ -11,13 +11,9 @@ script_directory="$(perl -e 'use File::Basename;
 cd "$script_directory" || exit
  
 # Define directory and input files
-data_subset="../data_preparation/data"
-histology_file="${data_subset}/histologies.tsv"
 data_prep_results="../data_preparation/results"
 samples_map="${data_prep_results}/samples_map.tsv"
 count_file="${data_prep_results}/rna_data.tsv"
-cnv_file="${data_prep_results}/cnv_data.tsv"
-snv_file="${data_prep_results}/snv_data.tsv"
 methyl_file="${data_prep_results}/methyl_data.tsv"
 splice_file="${data_prep_results}/splice_data.tsv"
 
@@ -25,8 +21,6 @@ splice_file="${data_prep_results}/splice_data.tsv"
 Rscript --vanilla 01-multi-modal-clustering-run.R \
 --samples_map $samples_map \
 --count_file $count_file \
---cnv_file $cnv_file \
---snv_file $snv_file \
 --methyl_file $methyl_file \
 --splice_file $splice_file \
 --output_dir "results" \

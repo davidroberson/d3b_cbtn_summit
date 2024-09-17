@@ -286,9 +286,3 @@ fwrite(
   sep = '\t'
 )
 
-# save coefficient table
-t1 <- tbl_regression(res_cox, exponentiate = TRUE)
-
-t1 %>%
-  as_gt() %>%
-  gt::gtsave(filename = file.path(plots_dir, 'coxph_summary_EFS.pdf'))

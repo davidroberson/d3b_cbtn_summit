@@ -19,12 +19,10 @@ run_clusterstats <- function(dat, output_dir, k_value) {
   
   
   # Normalize by each omics type's frobenius norm
-  count_data_norm <- count_data / norm(as.matrix(count_data), type="F")
-  methyl_data_norm <- methyl_data / norm(as.matrix(methyl_data), type="F")
-  splice_data_norm <- splice_data / norm(as.matrix(splice_data), type="F")
-  snv_data_norm <- snv_data / norm(as.matrix(snv_data), type="F")
-  cnv_data_norm <- cnv_data/ norm(as.matrix(cnv_data), type = "F")
-
+  count_data_norm <- dat[["rna_data"]] / norm(as.matrix(dat[["rna_data"]]), type="F")
+  methyl_data_norm <- dat[["methyl_data"]] / norm(as.matrix(dat[["methyl_data"]]), type="F")
+  splice_data_norm <- dat[["splice_data"]] / norm(as.matrix(dat[["splice_data"]]), type="F")
+  
   nmf_output <- nmf.mnnals(dat = list(count_data_norm, methyl_data_norm, splice_data_norm), 
                            k = k_value, 
                            maxiter = 200, 

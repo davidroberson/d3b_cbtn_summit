@@ -11,12 +11,11 @@ script_directory="$(perl -e 'use File::Basename;
 cd "$script_directory" || exit
  
 # Define directory and input files
-data_dir="../../data"
-count_file="${data_dir}/rna_data.tsv"
-cnv_file="${data_dir}/cnv_data.tsv"
-snv_file="${data_dir}/snv_data.tsv"
-methyl_file="${data_dir}/methyl_data.tsv"
-splice_file="${data_dir}/splice_data.tsv"
+data_dir="/sbgenomics/project-files/opc-v15"
+data_prep_results="../data_preparation/results"
+count_file="${data_prep_results}/rna_data.tsv"
+methyl_file="${data_prep_results}/methyl_data.tsv"
+splice_file="${data_prep_results}/splice_data.tsv"
 cluster_file="../intNMF/results/intnmf_clusters.tsv"
 output_dir="results/intnmf"
 plots_dir="plots/intnmf"
@@ -61,7 +60,7 @@ Rscript --vanilla 04-survival-curves_efs.R \
 --output_dir "${output_dir}/survival_efs"
 
 # sankey plots showing relationship between Multi-modal clusters and other clinical variables
-Rscript --vanilla 05-sankey-plots.R \
---cluster_file $cluster_file \
---histology_file $histology_file \
---plots_dir "${plots_dir}/sankey_plots"
+# Rscript --vanilla 05-sankey-plots.R \
+# --cluster_file $cluster_file \
+# --histology_file $histology_file \
+# --plots_dir "${plots_dir}/sankey_plots"
