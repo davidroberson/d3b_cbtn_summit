@@ -14,21 +14,13 @@ bash run_analysis.sh
 ***
 `01-multi-modal-clustering-run.R`: Purpose of this script is to read input files generated in the `data_preparation` module and run IntNMF to identify the most optimal cluster fitting the dataset of interest.
 
-#### Selection of optimal cluster
-
-From this comment: https://github.com/d3b-center/bixu-tracker/issues/1704#issuecomment-1480304368
-For each attempted k, the cluster values were mapped to the samples for each mode of data (e.g. CNV, SNV, Methylation, RNA and Splicing), the fpc stats for each mode were computed, sum of the `average.between` and `average.within` across the modes of data at each k were taken, then the difference of those two summed values at each k was taken to select the optimal cluster number (e.g. the k with the largest difference between the two).
-
-Using this method, the samples were classified into `14 clusters`.
 
 #### Input
 
 ```
 ../data_preparation/results
-├── cnv_data.tsv # cnv data used as input
 ├── methyl_data.tsv # methylation data used as input
 ├── norm_counts.tsv # expression data used as input
-├── snv_data.tsv # snv data used as input
 ├── splice_data.tsv # splice data used as input
 └── samples_map.tsv # biospecimens + cohort identifiers for samples used for each modality 
 ```
