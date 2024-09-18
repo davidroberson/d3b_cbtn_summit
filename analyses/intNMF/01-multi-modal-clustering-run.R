@@ -8,8 +8,6 @@ suppressPackageStartupMessages({
 # parse command line options
 option_list <- list(
   make_option(c("--count_file"), type = "character", help = "Counts file (.tsv)"),
-  make_option(c("--cnv_file"), type = "character", help = "CNV file (.tsv)"),
-  make_option(c("--snv_file"), type = "character", help = "SNV file (.tsv)"),
   make_option(c("--methyl_file"), type = "character", help = "Methylation file (.tsv)"),
   make_option(c("--splice_file"), type = "character", help = "PSI values (.tsv)"),
   make_option(c("--samples_map"), type = "character", help = "Mapping file with bs ids and samples ids (.tsv)"),
@@ -40,14 +38,6 @@ methyl_data <- read_tsv(opt$methyl_file) %>%
   column_to_rownames() %>%
   as.matrix()
 dat[["methyl_data"]] <- methyl_data
-snv_data <- read_tsv(opt$snv_file) %>%
-  column_to_rownames() %>%
-  as.matrix()
-dat[["snv_data"]] <- snv_data
-cnv_data <- read_tsv(opt$cnv_file) %>%
-  column_to_rownames() %>%
-  as.matrix()
-dat[["cnv_data"]] <- cnv_data
 splice_data <- read_tsv(opt$splice_file) %>%
   column_to_rownames() %>%
   as.matrix()
@@ -57,12 +47,11 @@ dat[["splice_data"]] <- splice_data
 wt = if (is.list(dat))
   rep(1, length(dat)) else 1
 
-# run run_clusterstats across all k-values
 # get the nmf output corresponding to the most optimal k
 nmf_output <- run_clusterstats(
   dat = dat,
   output_dir = output_dir,
-  k_value = 15
+  k_value = 10
 )
 
 # save feature scores per cluster for downstream processing
