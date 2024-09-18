@@ -22,6 +22,7 @@ dir.create(output_dir, showWarnings = F, recursive = T)
 
 # read m-values
 methyl_m_values_full <- readRDS(opt$methyl_mat) %>%
+  na.omit() %>%
   dplyr::mutate('Probe_ID' = make.names(Probe_ID)) %>%
   unique(by = 'Probe_ID') %>%
   tibble::column_to_rownames('Probe_ID')
@@ -41,7 +42,7 @@ run_analysis <- function(methyl_m_values_full,
     dplyr::filter(Gene_Feature %in% gene_feature_filter) %>%
     unique()
   methyl_m_values <- methyl_m_values_full %>%
-    filter(rownames(methyl_m_values_full) %in% methyl_annot$Probe_ID)
+    dplyr::filter(rownames(methyl_m_values_full) %in% methyl_annot$Probe_ID)
   
   # read cluster information for these samples
   mm_clusters <- read_tsv(file.path(opt$cluster_file))
