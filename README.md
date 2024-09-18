@@ -1,22 +1,16 @@
-# D3b Bixu Repository Template
+# D3b CBTN Summit Workshop
 
-Use this template to bootstrap a new D3b bixu repository 
+### CBTN Multi-Omic Subtyping
 
-### Badges
+This repo provides the necessary setup and analysis scripts to demonstrate the use of CBTN data for multi-omic clustering within the Cavatica Cloud Environment. 
 
-Update the LICENSE badge to point to the new repo location on GitHub.
-Note that the LICENSE badge will fail to render correctly unless the repo has
-been set to **public**.
+In this workshop, we will perform the following:
+1. Open a new cloud-based RStudio instance within Cavatica's Data Studio
+2. Clone the d3b-cbtn-summit github repository using the terminal within RStudio
+3. Review the modules within the repository and their key functionality. 
+4. Prepare epigenomic, transcriptomic, and alternatively splice transcriptome data for high-grade astrocytomas (HGATs) as input to multi-omic clustering. 
+5. Run intNMF matrix factorization for multi-omic clustering using the three data layers outlined in (4). 
+6. Evaluate novel subtypes in relation to known disease subtypes and survival characteristics. 
+7. Evaluate cluster-specific differential expression patterns.
+8. Time permitting, evaluate cluster-specific differential methylation and differentially methylated pathways. 
 
-Add additional badges for CI, docs, and other integrations as needed within the
-`<p>` tag next to the LICENSE.
-
-### Repo Description
-
-Update the repositories description with a short summary of the repository's
-intent.
-Include an appropriate emoji at the start of the summary.
-
-Add a handful of tags that summarize topics relating to the repository.
-If the repo has a documentation site or webpage, add it next to the repository
-description.
