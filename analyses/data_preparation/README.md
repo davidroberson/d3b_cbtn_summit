@@ -10,8 +10,7 @@ The purpose of this module is:
 
 ### Data version
 
-- OPC v12 for histologies (molecular subtype etc), RNA, Methylation, Splicing and SNV
-- [Release 20230309](https://cavatica.sbgenomics.com/u/d3b-bixu-ops/monthly-release-data/files/#q?path=20230309_release) for the CNV gainloss file (as this is not available in OPC).
+- OPC v15 for histologies (molecular subtype etc), RNA, Methylation, Splicing
 
 ### Run Analysis
 ```
