@@ -15,7 +15,7 @@ echo "R_MAX_VSIZE=100Gb" > .Renviron
 # Define directory and input files
 data_dir="/sbgenomics/project-files/opc-v15"
 count_file="${data_dir}/v15/gene-counts-rsem-expected_count-collapsed.rds"
-methyl_m_file="${data_dir}/v15/methyl-m-values.rds" 
+methyl_m_file="${data_dir}/v15/methyl-m-values-hgat.rds" 
 cluster_file="../intNMF/results/intnmf_clusters.tsv"
 methyl_annot_file="${data_dir}/v15/infinium.gencode.v39.probe.annotations.tsv.gz"
 
