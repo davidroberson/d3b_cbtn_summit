@@ -5,6 +5,7 @@ suppressPackageStartupMessages({
   library(msigdbr)
   library(limma)
   library(optparse)
+  library(data.table)
 })
 
 # parse command line options
@@ -21,10 +22,10 @@ output_dir <- opt$output_dir
 dir.create(output_dir, showWarnings = F, recursive = T)
 
 # read m-values
-methyl_m_values_full <- readRDS(opt$methyl_mat) %>% 
+methyl_m_values_full <- fread(opt$methyl_mat, data.table = FALSE, nrows = 500000) %>% 
   dplyr::slice_head(n = 500000) %>%
   na.omit() %>%
-  unique(by = 'Probe_ID')
+  dplyr::distinct(Probe_ID)
 
 rownames(methyl_m_values_full) <- NULL
 
@@ -33,8 +34,7 @@ methyl_m_values_full <- methyl_m_values_full %>%
 
 # read annotation
 methyl_annot_full <- data.table::fread(opt$methyl_annot) %>%
-  dplyr::mutate('Probe_ID' = make.names(Probe_ID)) %>%
-  unique(by = 'Probe_ID')
+  dplyr::distinct('Probe_ID', .keep_all = TRUE)
 
 # create generalized function for gene feature analysis
 run_analysis <- function(methyl_m_values_full,
