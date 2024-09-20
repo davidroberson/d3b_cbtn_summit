@@ -28,22 +28,22 @@ Rscript --vanilla 01-limma_analysis.R \
 
 # 2) gsameth pathway enrichment on differentially expressed CpG sites from (genebody + promoter) obtained from 01-limma_analysis.R
 # using REACTOME
-Rscript --vanilla 02-dms_gsameth_analysis.R \
---methyl_mat $methyl_m_file \
---diffexpr_sites "results/limma_output/genebody_promoter_diffexpr_probes_per_cluster.tsv" \
---msigdb "reactome" \
---prefix "genebody_promoter" \
---output_dir "results/dms_gsameth_output/reactome" \
---plots_dir "plots/dms_gsameth_output/reactome"
-
-# using HALLMARK
 # Rscript --vanilla 02-dms_gsameth_analysis.R \
 # --methyl_mat $methyl_m_file \
 # --diffexpr_sites "results/limma_output/genebody_promoter_diffexpr_probes_per_cluster.tsv" \
-# --msigdb "hallmark" \
+# --msigdb "reactome" \
 # --prefix "genebody_promoter" \
-# --output_dir "results/dms_gsameth_output/hallmark" \
-# --plots_dir "plots/dms_gsameth_output/hallmark"
+# --output_dir "results/dms_gsameth_output/reactome" \
+# --plots_dir "plots/dms_gsameth_output/reactome"
+
+# using HALLMARK
+Rscript --vanilla 02-dms_gsameth_analysis.R \
+--methyl_mat $methyl_m_file \
+--diffexpr_sites "results/limma_output/genebody_promoter_diffexpr_probes_per_cluster.tsv" \
+--msigdb "hallmark" \
+--prefix "genebody_promoter" \
+--output_dir "results/dms_gsameth_output/hallmark" \
+--plots_dir "plots/dms_gsameth_output/hallmark"
 
 # 2) methreg analysis on differentially methylated CpG sites from (genebody + promoter) obtained from 01-limma_analysis.R
 # Rscript --vanilla 02-methreg_analysis.R \
