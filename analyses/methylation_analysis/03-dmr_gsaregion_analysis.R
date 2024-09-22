@@ -5,9 +5,13 @@ suppressPackageStartupMessages({
   library(msigdbr)
   library(limma)
   library(DMRcate)
+  library(DMRcatedata)
   library(missMethyl)
   library(optparse)
 })
+
+# increase memory to read large files
+mem.maxVSize(vsize = 102400)
 
 # parse command line options
 option_list <- list(
@@ -46,8 +50,11 @@ gene_set <- msigdbr::msigdbr(species = "Homo sapiens",
 gene_set <- gene_set %>% dplyr::select(gs_name, entrez_gene)
 gene_set_entrez <- base::split(gene_set$entrez_gene, list(gene_set$gs_name))
 
-# read m-values
+# read m-values and remove rows with NA values
 methyl_m_values_full <- readRDS(opt$methyl_mat)
+methyl_m_values_full <- methyl_m_values_full %>%
+  tibble::column_to_rownames(var = 'Probe_ID')
+methyl_m_values_full <- methyl_m_values_full[complete.cases(methyl_m_values_full),]
 
 # read annotation
 methyl_annot_full <- data.table::fread(opt$methyl_annot)
@@ -110,7 +117,8 @@ run_analysis <- function(methyl_m_values_full,
       arraytype = "EPICv1",
       analysis.type = "differential",
       design = design,
-      coef = 2
+      coef = 2,
+      fdr = 0.1 # increase threshold as 0.05 returned no significant CpGs 
     )
     DMRs <- dmrcate(myAnnotation, lambda = 1000, C = 2)
     results.ranges <- extractRanges(DMRs)
