@@ -7,9 +7,6 @@ suppressPackageStartupMessages({
   library(missMethyl)
 })
 
-# increase memory to read large files
-mem.maxVSize(vsize = 102400)
-
 # parse command line options
 option_list <- list(
   make_option(c("--methyl_mat"), type = "character", help = "methylation data matrix, preferably m-values (.rds) "),
@@ -53,14 +50,13 @@ gene_set_entrez <- base::split(gene_set$entrez_gene, list(gene_set$gs_name))
 # read differentially methylated sites
 diffexpr_sites <- read_tsv(diffexpr_sites)
 
-# read m-values and remove rows with NA values
-methyl_mat <- readRDS(methyl_mat)
+# read methylation matrix for pulling all probes used in the analysis
+methyl_mat <- readRDS(methyl_mat) %>% 
+  dplyr::slice_head(n = 500000) %>%
+  na.omit() %>%
+  dplyr::filter(!duplicated(Probe_ID))
 methyl_mat <- methyl_mat %>%
-  tibble::column_to_rownames(var = 'Probe_ID')
-methyl_mat <- methyl_mat[complete.cases(methyl_mat),]
-
-# pull all probes to be used in the analysis
-all_cpgs <- rownames(methyl_mat)
+  tibble::column_to_rownames('Probe_ID')
 
 # use a for-loop
 clusters <- unique(diffexpr_sites$cluster)
@@ -72,14 +68,14 @@ pdf(
 )
 for (i in 1:length(clusters)) {
   sigCpGs <- diffexpr_sites %>%
-    filter(cluster == clusters[i])
+    dplyr::filter(cluster == clusters[i])
   
   # pathway enrichment using gsameth
   # take top 10000 instead of all significant probes because the latter results in too many probes and hence pathway enrichment does not work
   sigCpGs <- sigCpGs %>%
     dplyr::arrange(adj.P.Val) %>%
-    slice_head(n = 10000) %>%
-    pull(probes)
+    dplyr::slice_head(n = 10000) %>%
+    dplyr::pull(probes)
   pathway_df <- gsameth(
     sig.cpg = sigCpGs,
     all.cpg = all_cpgs,
@@ -91,10 +87,10 @@ for (i in 1:length(clusters)) {
   # significant pathways
   pathway_df <- pathway_df %>%
     as.data.frame() %>%
-    mutate(cluster = clusters[i]) %>%
-    rownames_to_column("pathway") %>%
+    dplyr::mutate(cluster = clusters[i]) %>%
+    tibble::rownames_to_column("pathway") %>%
     dplyr::arrange(FDR) %>%
-    filter(FDR < 0.1) # not many significant pathways, so use a loose cutoff
+    dplyr::filter(FDR < 0.1) # not many significant pathways, so use a loose cutoff
   
   # combine with full output
   all_pathway_df <- rbind(all_pathway_df, pathway_df)
@@ -103,7 +99,7 @@ for (i in 1:length(clusters)) {
   if (nrow(pathway_df) > 0) {
     pathway_df <- pathway_df %>%
       dplyr::arrange(FDR) %>%
-      slice_head(n = 50)
+      dplyr::slice_head(n = 50)
     pathway_df$pathway <- gsub("_", " ", pathway_df$pathway)
     pathway_df$pathway <- factor(pathway_df$pathway, levels = pathway_df$pathway)
     p <- ggplot(pathway_df, aes(pathway, y = (-1) * log10(FDR), fill = FDR)) +

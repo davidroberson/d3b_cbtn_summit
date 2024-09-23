@@ -5,10 +5,9 @@ suppressPackageStartupMessages({
   library(msigdbr)
   library(limma)
   library(optparse)
+  library(data.table)
+  library(dplyr)
 })
-
-# increase memory to read large files
-mem.maxVSize(vsize = 102400)
 
 # parse command line options
 option_list <- list(
@@ -23,16 +22,18 @@ opt <- parse_args(OptionParser(option_list = option_list, add_help_option = TRUE
 output_dir <- opt$output_dir
 dir.create(output_dir, showWarnings = F, recursive = T)
 
-# read m-values and remove rows with NA values
-methyl_m_values_full <- readRDS(opt$methyl_mat) 
+# read m-values
+methyl_m_values_full <- readRDS(opt$methyl_mat) %>% 
+  dplyr::slice_head(n = 500000) %>%
+  na.omit() %>%
+  dplyr::filter(!duplicated(Probe_ID))
 methyl_m_values_full <- methyl_m_values_full %>%
-  tibble::column_to_rownames(var = 'Probe_ID')
-methyl_m_values_full <- methyl_m_values_full[complete.cases(methyl_m_values_full),]
+  tibble::column_to_rownames('Probe_ID')
 
 # read annotation
 methyl_annot_full <- data.table::fread(opt$methyl_annot) %>%
-  distinct(Probe_ID, .keep_all = TRUE) 
-  
+  dplyr::filter(!duplicated(Probe_ID))
+
 # create generalized function for gene feature analysis
 run_analysis <- function(methyl_m_values_full,
                          methyl_annot_full,
