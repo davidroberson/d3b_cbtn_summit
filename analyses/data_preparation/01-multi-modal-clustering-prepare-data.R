@@ -4,6 +4,7 @@ suppressPackageStartupMessages({
   library(tidyverse)
   library(datawizard)
   library(reshape2)
+  library(rtracklayer)
 })
 
 # parse command line options
@@ -51,8 +52,8 @@ count_mat <- count_mat %>%
   dplyr::filter(rownames(count_mat) %in% gencode_gtf$gene_name)
 
 # combine with histology to map sample id
-count_mat <- melt(as.matrix(count_mat),
-                  varnames = c("Gene", "Kids_First_Biospecimen_ID"))
+count_mat <- reshape2::melt(as.matrix(count_mat),
+                            varnames = c("Gene", "Kids_First_Biospecimen_ID"))
 count_mat <- count_mat %>%
   dplyr::inner_join(histology_file %>% dplyr::select(Kids_First_Biospecimen_ID, sample_id),
                     by = 'Kids_First_Biospecimen_ID')
@@ -123,8 +124,8 @@ splice_file <- opt$splice_file
 splice_mat <- readRDS(splice_file)
 splice_mat <- splice_mat %>%
   dplyr::select(any_of(histology_file$Kids_First_Biospecimen_ID))
-splice_mat <- melt(as.matrix(splice_mat),
-                   varnames = c("Splice_Variant", "Kids_First_Biospecimen_ID"))
+splice_mat <- reshape2::melt(as.matrix(splice_mat),
+                             varnames = c("Splice_Variant", "Kids_First_Biospecimen_ID"))
 
 # combine with histology to map sample id
 splice_mat <- splice_mat %>%
@@ -174,7 +175,7 @@ keep <- unique(c(names(keep)))
 count_mat <- count_mat[, colnames(count_mat) %in% keep]
 
 # rank transformation
-count_mat <- ranktransform(t(count_mat) %>% as.data.frame())
+count_mat <- datawizard::ranktransform(t(count_mat) %>% as.data.frame())
 count_mat <- t(count_mat) %>% as.data.frame()
 print(dim(count_mat)) # 1000
 write_tsv(
@@ -230,4 +231,3 @@ sample_map <- rna_samples %>%
   inner_join(methyl_samples) %>%
   inner_join(splice_samples)
 write_tsv(sample_map, file = file.path(output_dir, "samples_map.tsv"))
-

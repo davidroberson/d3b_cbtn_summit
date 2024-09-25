@@ -19,6 +19,9 @@ methyl_m_file="${data_dir}/v15/methyl-m-values-hgat.rds"
 cluster_file="../intNMF/results/intnmf_clusters.tsv"
 methyl_annot_file="${data_dir}/v15/infinium.gencode.v39.probe.annotations.tsv.gz"
 
+# 0) install packages
+Rscript --vanilla 00-setup.R
+
 # 1) limma analysis to identify differentially expressed CpG sites
 Rscript --vanilla 01-limma_analysis.R \
 --methyl_mat $methyl_m_file \

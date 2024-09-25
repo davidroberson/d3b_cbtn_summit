@@ -17,6 +17,9 @@ count_file="${data_prep_results}/rna_data.tsv"
 methyl_file="${data_prep_results}/methyl_data.tsv"
 splice_file="${data_prep_results}/splice_data.tsv"
 
+# install packages
+Rscript --vanilla 00-setup.R
+
 # run IntNMF multi-modal analysis
 Rscript --vanilla 01-multi-modal-clustering-run.R \
 --samples_map $samples_map \

@@ -21,6 +21,9 @@ methyl_b_file="${data_dir}/v15/methyl-beta-values.rds"
 functional_sites_splice_file="${data_dir}/v15/psi-se-primary.func.rds" # filtered to functional sites by Ammar Naqvi using v12
 gtf_file="${data_dir}/v15/gencode.v39.primary_assembly.annotation.gtf.gz"
 
+# install packages
+Rscript --vanilla 00-setup.R
+
 # prepare input files for multi-modal clustering
 Rscript --vanilla 01-multi-modal-clustering-prepare-data.R \
 --histology_file $histology_file \

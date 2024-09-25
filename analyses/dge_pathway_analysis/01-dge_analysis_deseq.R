@@ -4,6 +4,8 @@ suppressPackageStartupMessages({
   library(tidyverse)
   library(optparse)
   library(DESeq2)
+  library(rtracklayer)
+  library(msigdbr)
 })
 
 # parse command line options
@@ -71,13 +73,13 @@ for (i in 1:length(clusters)) {
   group <- as.factor(mm_clusters$group)
   
   # DESeq2 analysis
-  dds <- DESeqDataSetFromMatrix(
+  dds <- DESeq2::DESeqDataSetFromMatrix(
     countData = round(expr_mat),
     colData = mm_clusters,
     design = ~ group
   )
-  dds <- DESeq(dds)
-  deseq_results <- results(dds, contrast = c("group", "COI", "Others"))
+  dds <- DESeq2::DESeq(dds)
+  deseq_results <- DESeq2::results(dds, contrast = c("group", "COI", "Others"))
   deseq_output <- deseq_results %>%
     as.data.frame() %>%
     filter(padj < 0.05) %>%

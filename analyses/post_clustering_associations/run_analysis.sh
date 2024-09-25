@@ -21,6 +21,9 @@ output_dir="results/intnmf"
 plots_dir="plots/intnmf"
 histology_file="${data_dir}/v15/histologies.tsv"
 
+# install packages
+Rscript --vanilla 00-setup.R
+
 # compare multi-modal derived clusters with molecular subtypes or subgroups
 Rscript --vanilla 01-compare-classes.R \
 --cluster_file $cluster_file \

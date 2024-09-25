@@ -16,6 +16,9 @@ gtf_file="${data_dir}/v15/gencode.v39.primary_assembly.annotation.gtf.gz"
 count_file="${data_dir}/v15/gene-counts-rsem-expected_count-collapsed.rds"
 cluster_file="../intNMF/results/intnmf_clusters.tsv"
 
+# install packages
+Rscript --vanilla 00-setup.R
+
 # run DESeq2 analysis
 Rscript --vanilla 01-dge_analysis_deseq.R \
 --expr_mat $count_file \
