@@ -2,23 +2,23 @@
 
 # CRAN packages
 if (!require("optparse", quietly = TRUE))
-  install.packages("optparse")
+  install.packages("optparse", repos = "http://cran.us.r-project.org")
 
 if (!require("tidyverse", quietly = TRUE))
-  install.packages("tidyverse")
+  install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 
 if (!require("data.table", quietly = TRUE))
-  install.packages("data.table")
+  install.packages("data.table", repos = "http://cran.us.r-project.org")
 
 if (!require("dplyr", quietly = TRUE))
-  install.packages("dplyr")
+  install.packages("dplyr", repos = "http://cran.us.r-project.org")
 
 if (!require("msigdbr", quietly = TRUE))
-  install.packages("msigdbr")
+  install.packages("msigdbr", repos = "http://cran.us.r-project.org")
 
 # Bioc packages
 if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
+  install.packages("BiocManager", repos = "http://cran.us.r-project.org")
 
 if (!require("missMethyl", quietly = TRUE))
   BiocManager::install("missMethyl")

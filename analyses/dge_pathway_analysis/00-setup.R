@@ -2,26 +2,26 @@
 
 # CRAN packages
 if (!require("optparse", quietly = TRUE))
-  install.packages("optparse")
+  install.packages("optparse", repos = "http://cran.us.r-project.org")
 
 if (!require("tidyverse", quietly = TRUE))
-  install.packages("tidyverse")
+  install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 
 if (!require("reshape2", quietly = TRUE))
-  install.packages("reshape2")
+  install.packages("reshape2", repos = "http://cran.us.r-project.org")
 
 if (!require("msigdbr", quietly = TRUE))
-  install.packages("msigdbr")
+  install.packages("msigdbr", repos = "http://cran.us.r-project.org")
 
 if (!require("ggplot2", quietly = TRUE))
-  install.packages("ggplot2")
+  install.packages("ggplot2", repos = "http://cran.us.r-project.org")
 
 if (!require("ggpubr", quietly = TRUE))
-  install.packages("ggpubr")
+  install.packages("ggpubr", repos = "http://cran.us.r-project.org")
 
 # Bioc packages
 if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
+  install.packages("BiocManager", repos = "http://cran.us.r-project.org")
 
 if (!require("DESeq2", quietly = TRUE))
   BiocManager::install("DESeq2")
