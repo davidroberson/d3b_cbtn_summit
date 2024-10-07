@@ -2,10 +2,10 @@
 
 # CRAN packages
 if (!require("optparse", quietly = TRUE))
-  install.packages("optparse")
+  install.packages("optparse", repos = "http://cran.us.r-project.org")
 
 if (!require("tidyverse", quietly = TRUE))
-  install.packages("tidyverse")
+  install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 
 if (!require("IntNMF", quietly = TRUE))
-  install.packages("IntNMF")
+  install.packages("IntNMF", repos = "http://cran.us.r-project.org")
