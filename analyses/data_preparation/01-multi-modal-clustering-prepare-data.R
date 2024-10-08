@@ -7,6 +7,8 @@ suppressPackageStartupMessages({
   library(rtracklayer)
 })
 
+mem.maxVSize(vsize = 102400)
+
 # parse command line options
 option_list <- list(
   make_option(c("--histology_file"), type = "character", help = "Histology file (.tsv)"),
