@@ -41,10 +41,10 @@ Rscript --vanilla 02-dms_gsameth_analysis.R \
 
 # 3) identify differentially methylation regions using DMRcate::dmrcate and pathway enrichment using missMethyl::gsaregion
 # using HALLMARK
-Rscript --vanilla 03-dmr_gsaregion_analysis.R \
---methyl_mat $methyl_m_file \
---methyl_annot $methyl_annot_file \
---cluster_file $cluster_file \
---msigdb "hallmark" \
---output_dir "results/dmr_gsaregion_output/hallmark" \
---plots_dir "plots/dmr_gsaregion_output/hallmark"
+# Rscript --vanilla 03-dmr_gsaregion_analysis.R \
+# --methyl_mat $methyl_m_file \
+# --methyl_annot $methyl_annot_file \
+# --cluster_file $cluster_file \
+# --msigdb "hallmark" \
+# --output_dir "results/dmr_gsaregion_output/hallmark" \
+# --plots_dir "plots/dmr_gsaregion_output/hallmark"
