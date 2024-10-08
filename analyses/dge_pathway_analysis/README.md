@@ -17,11 +17,11 @@ bash run_analysis.sh
 #### Inputs
 
 ```
-../../data
-├── c2.cp.kegg_medicus.v2023.2.Hs.symbols.gmt # KEGG MEDICUS gmt file
-└── gencode.v39.primary_assembly.annotation.gtf.gz # gencode v39
+# gencode v39
+../../data/v15
+└── gencode.v39.primary_assembly.annotation.gtf.gz 
 
-# cohort specific files
+# gene expression file
 ../data_preparation/data
 └── gene-counts-rsem-expected_count-collapsed.rds
 
@@ -59,4 +59,3 @@ plots/intNMF/deseq
     ├── cluster_{n}_vs_rest_gsea_cnet.pdf
     └── cluster_{n}_vs_rest_gsea_dotplot.pdf
 ```
-
