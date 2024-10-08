@@ -57,6 +57,7 @@ methyl_mat <- readRDS(methyl_mat) %>%
   dplyr::filter(!duplicated(Probe_ID))
 methyl_mat <- methyl_mat %>%
   tibble::column_to_rownames('Probe_ID')
+all_cpgs <- rownames(methyl_mat)
 
 # use a for-loop
 clusters <- unique(diffexpr_sites$cluster)

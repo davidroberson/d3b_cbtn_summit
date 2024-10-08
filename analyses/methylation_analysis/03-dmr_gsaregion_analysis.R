@@ -9,6 +9,8 @@ suppressPackageStartupMessages({
   library(optparse)
 })
 
+mem.maxVSize(vsize = 102400)
+
 # parse command line options
 option_list <- list(
   make_option(c("--methyl_mat"), type = "character", help = "methylation data matrix, preferably m-values (.rds) "),
@@ -47,7 +49,12 @@ gene_set <- gene_set %>% dplyr::select(gs_name, entrez_gene)
 gene_set_entrez <- base::split(gene_set$entrez_gene, list(gene_set$gs_name))
 
 # read m-values
-methyl_m_values_full <- readRDS(opt$methyl_mat)
+methyl_m_values_full <- readRDS(opt$methyl_mat) %>% 
+  dplyr::slice_head(n = 500000) %>%
+  na.omit() %>%
+  dplyr::filter(!duplicated(Probe_ID))
+methyl_m_values_full <- methyl_m_values_full %>%
+  tibble::column_to_rownames("Probe_ID")
 
 # read annotation
 methyl_annot_full <- data.table::fread(opt$methyl_annot)
