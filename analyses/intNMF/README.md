@@ -2,7 +2,7 @@
 
 ### Purpose
 
-This module performs multi-modal clustering using the [IntNMF](https://cran.r-project.org/web/packages/IntNMF/index.html) R package on RNA, CNV, SNV, Methylation and Splicing data on the cohort of interest. 
+This module performs multi-modal clustering using the [IntNMF](https://cran.r-project.org/web/packages/IntNMF/index.html) R package on RNA, Methylation and Splicing data on the cohort of interest. 
 
 ### Run Analysis
 
@@ -20,7 +20,7 @@ bash run_analysis.sh
 ```
 ../data_preparation/results
 ├── methyl_data.tsv # methylation data used as input
-├── norm_counts.tsv # expression data used as input
+├── rna_data.tsv # expression data used as input
 ├── splice_data.tsv # splice data used as input
 └── samples_map.tsv # biospecimens + cohort identifiers for samples used for each modality 
 ```
@@ -28,18 +28,19 @@ bash run_analysis.sh
 #### Output
 
 ```
-results
-├── intnmf_fit_all.rds # output of nmf.mnnals for all k values
-├── intnmf_clusterstats.tsv # cluster stats across all k-values for each modality
-├── intnmf_best_fit.rds # output of nmf.mnnals for best fit (selected k)
+results/
 ├── feature_scores # IntNMF scores generated for each data modality
-│   ├── feature_scores_cnv.tsv
-│   ├── feature_scores_methyl.tsv
-│   ├── feature_scores_rna.tsv
-│   ├── feature_scores_snv.tsv
-│   └── feature_scores_splice.tsv
-└── intnmf_clusters.tsv # output clusters with per sample along with corresponding molecular subtype
+│ ├── feature_scores_methyl.tsv
+│ ├── feature_scores_rna.tsv
+│ └── feature_scores_splice.tsv
+├── intnmf_best_fit.rds # output of nmf.mnnals for best fit (selected k)
+├── intnmf_clusters.tsv # output clusters with per sample along with corresponding molecular subtype
+└── intnmf_fit_all.rds # output of nmf.mnnals for all k values
+```
 
+#### Plots
+
+```
 plots
 ├── intnmf_consensus_plot.pdf # consensus plot of optimal k
 └── intnmf_silhouette_plot.pdf # silhouette plot of optimal k

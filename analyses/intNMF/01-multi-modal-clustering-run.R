@@ -59,14 +59,10 @@ subdir <- file.path(output_dir, "feature_scores")
 dir.create(subdir, showWarnings = F, recursive = T)
 write_tsv(as.data.frame(nmf_output$H$rna_data),
           file = file.path(subdir, "feature_scores_rna.tsv"))
-write_tsv(as.data.frame(nmf_output$H$cnv_data),
-          file = file.path(subdir, "feature_scores_cnv.tsv"))
 write_tsv(
   as.data.frame(nmf_output$H$methyl_data),
   file = file.path(subdir, "feature_scores_methyl.tsv")
 )
-write_tsv(as.data.frame(nmf_output$H$snv_data),
-          file = file.path(subdir, "feature_scores_snv.tsv"))
 write_tsv(
   as.data.frame(nmf_output$H$splice_data),
   file = file.path(subdir, "feature_scores_splice.tsv")
