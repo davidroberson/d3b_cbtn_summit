@@ -1,6 +1,0 @@
-[1] "Multi-modal clusters vs RNA-derived molecular_subtypes"
-[1] 0.04940675
-[1] "Multi-modal clusters vs dkfz_v11_methylation_subclass"
-[1] 0.08961345
-[1] "Multi-modal clusters vs dkfz_v12_methylation_subclass"
-[1] 0.09238174
