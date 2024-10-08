@@ -378,3 +378,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# add data file to gitignore
+data/v15

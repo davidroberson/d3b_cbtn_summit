@@ -142,7 +142,8 @@ p <- ggsurvplot(
     "#F8766D",
     "#C77CFF",
     "#911eb4",
-    "#7CAE00"
+    "#7CAE00",
+    "#0000ff" 
   ),
   title = "Survival stratified by Methylation-derived molecular subtypes",
   data = surv_data,

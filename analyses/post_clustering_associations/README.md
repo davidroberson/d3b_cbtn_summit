@@ -18,11 +18,12 @@ bash run_analysis.sh
 
 ```
 # histology file
-../data_preparation/data
+../../data/v15
 └── histologies.tsv
 
 # multi-modal derived clusters
-../intNMF/results/intnmf_clusters.tsv
+../intNMF/results/
+└── intnmf_clusters.tsv
 ```
 
 #### Outputs
@@ -41,27 +42,24 @@ results
 
 ```
 # histology file
-../data_preparation/data
+../../data/v15
 └── histologies.tsv
 
 # filtered and transformed files used for multi-modal clustering
 ../data_preparation/results
-├── cnv_data.tsv
 ├── methyl_data.tsv
 ├── rna_data.tsv
-├── snv_data.tsv
 └── splice_data.tsv
 
 # feature-level intNMF weights for each data modality
 ../intNMF/results/feature_scores
-├── feature_scores_cnv.tsv
 ├── feature_scores_methyl.tsv
 ├── feature_scores_rna.tsv
-├── feature_scores_snv.tsv
 └── feature_scores_splice.tsv
 
 # multi-modal derived clusters
-../intNMF/results/intnmf_clusters.tsv
+../intNMF/results
+└── intnmf_clusters.tsv
 ```
 
 #### Outputs
@@ -80,11 +78,12 @@ plots/intnmf/heatmaps
 
 ```
 # histology file
-../data_preparation/data
+../../data/v15
 └── histologies.tsv
 
 # multi-modal derived clusters
-../intNMF/results/intnmf_clusters.tsv
+../intNMF/results
+└── intnmf_clusters.tsv
 ```
 
 #### Outputs
@@ -105,22 +104,28 @@ plots/intnmf/bubble_plots
 
 ```
 # histology file
-../data_preparation/data
+../../data/v15
 └── histologies.tsv
 
 # multi-modal derived clusters
-../intNMF/results/intnmf_clusters.tsv
+../intNMF/results
+└── intnmf_clusters.tsv
 ```
 
 #### Outputs
 
 ```
+# risk scores and summaries
+results/intnmf/survival_os
+├── coxph_risk_score_OS.txt
+└── coxph_summary_OS.txt
+
 # overall survival plots
 plots/intnmf/survival_os
+├── coxph_summary_OS.pdf
 ├── survival_methyl_subtype_v11.pdf
 ├── survival_methyl_subtype_v12.pdf
 ├── survival_mm_clusters.pdf
-├── survival_mm_clusters_per_subtype.pdf
 └── survival_molsubtype.pdf
 ```
 ***
@@ -129,23 +134,29 @@ plots/intnmf/survival_os
 #### Inputs
 
 ```
-# for EFS plots, we need EFS_event_type which is present in v15 histology file
+# histology file
 ../../data/v15
 └── histologies.tsv
 
 # multi-modal derived clusters
-../intNMF/results/intnmf_clusters.tsv
+../intNMF/results
+└── intnmf_clusters.tsv
 ```
 
 #### Outputs
 
 ```
+# risk scores and summaries
+results/intnmf/survival_efs
+├── coxph_risk_score_EFS.txt
+└── coxph_summary_EFS.txt
+
 # event-free survival plots
 plots/intnmf/survival_efs
+├── coxph_summary_EFS.pdf
 ├── survival_methyl_subtype_v11.pdf
 ├── survival_methyl_subtype_v12.pdf
 ├── survival_mm_clusters.pdf
-├── survival_mm_clusters_per_subtype.pdf
 └── survival_molsubtype.pdf
 ```
 
@@ -165,7 +176,8 @@ plots/intnmf/survival_efs
 └── histologies.tsv
 
 # multi-modal derived clusters
-../intNMF/results/intnmf_clusters.tsv
+../intNMF/results
+└── intnmf_clusters.tsv
 ```
 
 #### Output
