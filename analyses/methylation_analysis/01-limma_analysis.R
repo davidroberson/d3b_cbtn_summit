@@ -23,7 +23,7 @@ output_dir <- opt$output_dir
 dir.create(output_dir, showWarnings = F, recursive = T)
 
 # read m-values
-cat('Reading m-values')
+cat('Reading m-values \n')
 methyl_m_values_full <- readRDS(opt$methyl_mat) %>% 
   dplyr::slice_head(n = 500000) %>%
   na.omit() %>%
@@ -32,7 +32,7 @@ methyl_m_values_full <- methyl_m_values_full %>%
   tibble::column_to_rownames('Probe_ID')
 
 # read annotation
-cat('Reading methylation feature annotations')
+cat('Reading methylation feature annotations \n')
 methyl_annot_full <- data.table::fread(opt$methyl_annot) %>%
   dplyr::filter(!duplicated(Probe_ID))
 
