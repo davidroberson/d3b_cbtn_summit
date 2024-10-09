@@ -48,7 +48,7 @@ wt = if (is.list(dat))
   rep(1, length(dat)) else 1
 
 # get the nmf output corresponding to the most optimal k
-cat('Running multi-modal clustering')
+cat('Running multi-modal clustering \n')
 nmf_output <- run_clusterstats(
   dat = dat,
   output_dir = output_dir,
@@ -72,7 +72,7 @@ write_tsv(
 # 1) ConsensusMatPlot
 # Given the integrative NMF fit object, the function creates image plot of the consensus matrix ordered
 # according to clusters groups. Cleaner block structure indicates stronger clusters
-cat('Generating cluster quality plots')
+cat('Generating cluster quality plots \n')
 pdf(
   file = file.path(plots_dir, "intnmf_consensus_plot.pdf"),
   width = 10,
@@ -105,5 +105,5 @@ df <- samples_map %>%
   inner_join(df)
 
 # write output
-cat('Writing clustering output')
+cat('Writing clustering output \n')
 write_tsv(df, file = file.path(output_dir, "intnmf_clusters.tsv"))
