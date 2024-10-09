@@ -92,7 +92,7 @@ for (i in 1:length(clusters)) {
   output_df <- rbind(output_df, deseq_output)
   
   # pathway enrichment using REACTOME
-  cat('Running Reactome pathway enrichment')
+  cat('Running Reactome pathway enrichment \n')
   reactome_pathways <- msigdbr::msigdbr(category = "C2", subcategory = "CP:REACTOME")
   reactome_pathways <- reactome_pathways %>%
     dplyr::select(gs_name, gene_symbol) %>%
@@ -108,7 +108,7 @@ for (i in 1:length(clusters)) {
   )
   
   # pathway enrichment using HALLMARK
-  cat('Running Hallmark pathway enrichment')
+  cat('Running Hallmark pathway enrichment \n')
   hallmark_pathways <- msigdbr::msigdbr(category = "H", subcategory = NULL)
   hallmark_pathways <- hallmark_pathways %>%
     dplyr::select(gs_name, gene_symbol) %>%
@@ -125,6 +125,6 @@ for (i in 1:length(clusters)) {
 }
 
 # write output to tsv
-cat('Writing outputs')
+cat('Writing outputs \n')
 write_tsv(x = output_df,
           file = file.path(results_dir, "diffexpr_output_per_cluster.tsv"))
