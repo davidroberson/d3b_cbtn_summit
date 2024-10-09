@@ -98,6 +98,7 @@ custom_table_theme <- theme_survminer(base_size = 12) +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank())
 
 # survival curves stratified by RNA-derived molecular subtype
+cat('Generating Kaplan Meier survival plots by molecular subtypes')
 surv_data$molecular_subtype <- factor(surv_data$molecular_subtype, levels = sort(unique(surv_data$molecular_subtype)))
 fit <- survival::survfit(formula = Surv(as.numeric(EFS_days), EFS_status) ~ molecular_subtype,
                          data = surv_data)
@@ -128,6 +129,7 @@ print(p)
 dev.off()
 
 # survival curves stratified by Methylation-derived molecular subtype (v11)
+cat('Generating Kaplan Meier survival plots by DKFZ v11 subtypes')
 surv_data$dkfz_v11_methylation_subclass <- factor(surv_data$dkfz_v11_methylation_subclass, levels = sort(unique(
   surv_data$dkfz_v11_methylation_subclass
 )))
@@ -169,6 +171,7 @@ print(p)
 dev.off()
 
 # survival curves stratified by Methylation-derived molecular subtype (v12)
+cat('Generating Kaplan Meier survival plots by DKFZ v12 subtypes')
 surv_data$dkfz_v12_methylation_subclass <- factor(surv_data$dkfz_v12_methylation_subclass, levels = sort(unique(
   surv_data$dkfz_v12_methylation_subclass
 )))
@@ -209,6 +212,7 @@ print(p)
 dev.off()
 
 # survival curves stratified by Multi-modal subtypes
+cat('Generating Kaplan Meier survival plots by multi-omic subtypes')
 surv_data$mm_cluster <- factor(surv_data$mm_cluster, levels = sort(as.numeric(unique(
   surv_data$mm_cluster
 ))))
