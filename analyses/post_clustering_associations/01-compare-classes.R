@@ -23,6 +23,7 @@ dir.create(output_dir, showWarnings = F, recursive = T)
 mm_clusters <- read_tsv(file = opt$cluster_file)
 
 # combine Multi-modal clusters with RNA-derived molecular subtypes
+cat('Comparing multi-omic clusters to known subtypes')
 anno_file_rna <- read_tsv(file = opt$histology_file) %>%
   dplyr::select(Kids_First_Biospecimen_ID, molecular_subtype, CNS_region) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_RNA" = "Kids_First_Biospecimen_ID") %>%
