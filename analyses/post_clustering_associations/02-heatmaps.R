@@ -46,6 +46,7 @@ dir.create(plots_dir, showWarnings = F, recursive = T)
 # feature-level heatmaps using top 10 most representative features per modality
 
 # expression
+cat('Plotting top intNMF expression features')
 feature_scores_rna <- read_tsv(opt$feature_scores_rna)
 feature_scores_rna <- feature_scores_rna %>%
   as.data.frame() %>%
@@ -68,6 +69,7 @@ p1 <- pheatmap::pheatmap(
 )
 
 # methylation
+cat('Plotting top intNMF methylation features')
 feature_scores_methyl <- read_tsv(opt$feature_scores_methyl)
 feature_scores_methyl <- feature_scores_methyl %>%
   as.data.frame() %>%
@@ -90,6 +92,7 @@ p2 <- pheatmap::pheatmap(
 )
 
 # splicing
+cat('Plotting top intNMF splicing features')
 feature_scores_splice <- read_tsv(opt$feature_scores_splice)
 feature_scores_splice <- feature_scores_splice %>%
   as.data.frame() %>%
