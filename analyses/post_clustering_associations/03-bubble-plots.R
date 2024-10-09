@@ -24,7 +24,7 @@ dir.create(plots_dir, showWarnings = F, recursive = T)
 mm_clusters <- read_tsv(file = opt$cluster_file)
 
 # combine Multi-modal clusters with RNA-derived molecular subtypes
-cat('Joining multi-omic cluster annotations with histologic data')
+cat('Joining multi-omic cluster annotations with histologic data \n')
 histology_file <- opt$histology_file
 anno_file_rna <- read_tsv(file = histology_file) %>%
   dplyr::select(Kids_First_Biospecimen_ID, molecular_subtype, CNS_region) %>%
@@ -52,7 +52,7 @@ anno_file$dkfz_v11_methylation_subclass <- gsub(", | ", "_", anno_file$dkfz_v11_
 
 # generate balloon plot with at least 5 samples in a group
 # Multi-modal clusters vs RNA-derived molecular subtypes
-cat('Plotting multi-omic clusters in relation to known subtypes')
+cat('Plotting multi-omic clusters in relation to known subtypes \n')
 dat <- anno_file %>%
   filter(!is.na(molecular_subtype)) %>%
   group_by(molecular_subtype, mm_cluster)  %>%
