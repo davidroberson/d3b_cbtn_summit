@@ -31,6 +31,7 @@ plots_dir <- opt$plots_dir
 dir.create(plots_dir, showWarnings = F, recursive = T)
 
 # genesets
+cat('Reading pathway annotations')
 if (msigdb == "kegg") {
   category <- "C2"
   subcategory = "CP:KEGG"
@@ -51,6 +52,7 @@ gene_set_entrez <- base::split(gene_set$entrez_gene, list(gene_set$gs_name))
 diffexpr_sites <- read_tsv(diffexpr_sites)
 
 # read methylation matrix for pulling all probes used in the analysis
+cat('Reading methylation values')
 methyl_mat <- readRDS(methyl_mat) %>% 
   dplyr::slice_head(n = 500000) %>%
   na.omit() %>%
