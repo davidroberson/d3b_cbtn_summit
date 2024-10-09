@@ -46,7 +46,7 @@ dir.create(plots_dir, showWarnings = F, recursive = T)
 # feature-level heatmaps using top 10 most representative features per modality
 
 # expression
-cat('Plotting top intNMF expression features')
+cat('Plotting top intNMF expression features \n')
 feature_scores_rna <- read_tsv(opt$feature_scores_rna)
 feature_scores_rna <- feature_scores_rna %>%
   as.data.frame() %>%
