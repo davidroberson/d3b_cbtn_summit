@@ -33,7 +33,7 @@ dir.create(output_dir, showWarnings = F, recursive = T)
 mm_clusters <- read_tsv(file = opt$cluster_file)
 
 # combine Multi-modal clusters with RNA-derived molecular subtypes
-cat('Joining multi-omic cluster annotations with histologic data')
+cat('Joining multi-omic cluster annotations with histologic data \n')
 histology_file <- opt$histology_file
 anno_file_rna <- read_tsv(file = histology_file) %>%
   dplyr::select(
@@ -85,7 +85,7 @@ custom_table_theme <- theme_survminer(base_size = 12) +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank())
 
 # survival curves stratified by RNA-derived molecular subtype
-cat('Generating Kaplan Meier survival plots by molecular subtypes')
+cat('Generating Kaplan Meier survival plots by molecular subtypes \n')
 surv_data$molecular_subtype <- factor(surv_data$molecular_subtype, levels = sort(unique(surv_data$molecular_subtype)))
 fit <- survival::survfit(formula = Surv(as.numeric(OS_days), OS_status) ~ molecular_subtype,
                          data = surv_data)
@@ -116,7 +116,7 @@ print(p)
 dev.off()
 
 # survival curves stratified by Methylation-derived molecular subtype (v11)
-cat('Generating Kaplan Meier survival plots by DKFZ v11 subtypes')
+cat('Generating Kaplan Meier survival plots by DKFZ v11 subtypes \n')
 surv_data$dkfz_v11_methylation_subclass <- factor(surv_data$dkfz_v11_methylation_subclass, levels = sort(unique(
   surv_data$dkfz_v11_methylation_subclass
 )))
@@ -168,7 +168,7 @@ print(p)
 dev.off()
 
 # survival curves stratified by Methylation-derived molecular subtype (v12)
-cat('Generating Kaplan Meier survival plots by DKFZ v12 subtypes')
+cat('Generating Kaplan Meier survival plots by DKFZ v12 subtypes \n')
 surv_data$dkfz_v12_methylation_subclass <- factor(surv_data$dkfz_v12_methylation_subclass, levels = sort(unique(
   surv_data$dkfz_v12_methylation_subclass
 )))
@@ -229,7 +229,7 @@ print(p)
 dev.off()
 
 # survival curves stratified by Multi-modal subtypes
-cat('Generating Kaplan Meier survival plots by multi-omic subtypes')
+cat('Generating Kaplan Meier survival plots by multi-omic subtypes \n')
 surv_data$mm_cluster <- factor(surv_data$mm_cluster, levels = sort(as.numeric(unique(
   surv_data$mm_cluster
 ))))
