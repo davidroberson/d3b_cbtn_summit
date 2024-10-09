@@ -30,14 +30,14 @@ dir.create(output_dir, showWarnings = F, recursive = T)
 source(file.path("utils", "filter_cnv.R"))
 
 # read histology file and filter to short histology of interest
-cat('Reading histology file')
+cat('Reading histology file \n')
 histology_file <- opt$histology_file
 histology_file <- readr::read_tsv(file = histology_file)
 histology_file <- histology_file %>%
   dplyr::filter(short_histology %in% short_histology_of_interest)
 
 # read gtf and filter to protein coding
-cat('Reading Gencode file') 
+cat('Reading Gencode file \n') 
 gtf_file <- opt$gtf_file
 gencode_gtf <- rtracklayer::import(con = gtf_file) %>%
   as.data.frame() %>%
@@ -46,7 +46,7 @@ gencode_gtf <- rtracklayer::import(con = gtf_file) %>%
   unique()
 
 # 1) read count data
-cat('Filtering expression data')
+cat('Filtering expression data \n')
 count_file <- opt$count_file
 count_mat <- readRDS(file = count_file)
 count_mat <- count_mat %>%
@@ -88,7 +88,7 @@ print(dim(count_mat))
 
 # 2) Methylation
 # read beta-values
-cat('Reading beta values and subsetting')
+cat('Reading beta values and subsetting \n')
 methyl_file <- opt$methyl_file
 methyl_data <- readRDS(file = file.path(methyl_file))
 methyl_data <- methyl_data %>%
@@ -126,7 +126,7 @@ print(dim(methyl_data))
 
 # 3) Splice dataset
 # read splice data
-cat('Reading splice data and filtering')
+cat('Reading splice data and filtering \n')
 splice_file <- opt$splice_file
 splice_mat <- readRDS(splice_file)
 splice_mat <- splice_mat %>%
@@ -167,7 +167,7 @@ samples_of_interest <- intersect(rownames(count_mat), rownames(methyl_data))
 samples_of_interest <- intersect(samples_of_interest, rownames(splice_mat))
 
 # now final filter/transformation on samples of interest
-cat('Performing feature selection')
+cat('Performing feature selection \n')
 # 1) RNA
 # count_mat <- t(count_mat) %>% as.data.frame()
 count_mat <- count_mat[samples_of_interest, ]
@@ -224,7 +224,7 @@ write_tsv(
 )
 
 # final sample map
-cat('Final step: Creating final sample map')
+cat('Final step: Creating final sample map \n')
 rna_samples <- count_samples %>%
   dplyr::filter(sample_id %in% samples_of_interest) %>%
   dplyr::rename("Kids_First_Biospecimen_ID_RNA" = "Kids_First_Biospecimen_ID")
