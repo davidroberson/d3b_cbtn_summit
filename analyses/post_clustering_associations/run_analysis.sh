@@ -63,7 +63,7 @@ Rscript --vanilla 04-survival-curves_efs.R \
 --output_dir "${output_dir}/survival_efs"
 
 # sankey plots showing relationship between Multi-modal clusters and other clinical variables
-Rscript --vanilla 05-sankey-plots.R \
---cluster_file $cluster_file \
---histology_file $histology_file \
---plots_dir "${plots_dir}/sankey_plots"
+# Rscript --vanilla 05-sankey-plots.R \
+# --cluster_file $cluster_file \
+# --histology_file $histology_file \
+# --plots_dir "${plots_dir}/sankey_plots"
