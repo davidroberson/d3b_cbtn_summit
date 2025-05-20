@@ -13,9 +13,7 @@ baseCommand: ["Rscript", "--vanilla"]
 requirements:
   - class: DockerRequirement
     # Use our custom image with all required packages pre-installed
-    dockerPull: "pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.0"
-    # When testing with sbpack, use your own repository
-    # dockerPull: "<your-dockerhub-username>/cbtn-summit-workflow:1.0.0"
+    dockerPull: "pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.1"
   - class: InlineJavascriptRequirement
   - class: InitialWorkDirRequirement
     listing:

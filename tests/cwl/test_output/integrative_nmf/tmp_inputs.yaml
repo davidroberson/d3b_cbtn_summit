@@ -1,0 +1,14 @@
+samples_map:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/tests/cwl/test_output/data_preparation/samples_map.tsv
+rna_data:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/tests/cwl/test_output/data_preparation/rna_data.tsv
+methyl_data:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/tests/cwl/test_output/data_preparation/methyl_data.tsv
+splice_data:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/tests/cwl/test_output/data_preparation/splice_data.tsv
+max_k: 3
+method: "intNMF"

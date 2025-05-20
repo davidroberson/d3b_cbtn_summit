@@ -18,25 +18,25 @@ RUN R -e "install.packages('tidyverse', repos='https://cran.rstudio.com/', depen
 
 # Data preparation packages
 RUN R -e "install.packages('datawizard', repos='https://cran.rstudio.com/', dependencies = TRUE)"
-RUN R -e "install.packages('reshape2', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('matrixStats', repos='https://cran.rstudio.com/', dependencies = FALSE)"
+RUN R -e "install.packages('reshape2', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('matrixStats', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 
 # Clustering packages
-RUN R -e "install.packages('cluster', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('IntNMF', repos='https://cran.rstudio.com/', dependencies = FALSE)"
+RUN R -e "install.packages('cluster', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('IntNMF', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 
 # Visualization packages
-RUN R -e "install.packages('ggplot2', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('ggpubr', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('corrplot', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('gridExtra', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('circlize', repos='https://cran.rstudio.com/', dependencies = FALSE)"
+#RUN R -e "install.packages('ggplot2', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('ggpubr', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('corrplot', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('gridExtra', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('circlize', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 
 # Statistical analysis packages
-RUN R -e "install.packages('survival', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('survminer', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('mclust', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('msigdbr', repos='https://cran.rstudio.com/', dependencies = FALSE)"
+RUN R -e "install.packages('survival', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('survminer', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('mclust', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('msigdbr', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 
 # Bioconductor packages - core
 RUN R -e "BiocManager::install('rtracklayer', ask = FALSE, update = FALSE)"

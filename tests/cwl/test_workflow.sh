@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to run the multi-omic clustering workflow with test data
+# Script to run the complete multi-omic clustering workflow with test data
 # Author: Claude
 # Date: May 20, 2025
 
@@ -26,18 +26,43 @@ if ! command -v cwltool &> /dev/null; then
 fi
 
 # Define paths
-WORKFLOW_DIR=$(dirname "$(readlink -f "$0")")
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+WORKFLOW_DIR=$(realpath "${SCRIPT_DIR}/../../cwl")
 WORKFLOW_PATH="${WORKFLOW_DIR}/multi_modal_clustering_workflow.cwl"
-TEST_INPUTS="${WORKFLOW_DIR}/test_data/test_inputs.yaml"
-OUTPUT_DIR="${WORKFLOW_DIR}/test_output"
+TEST_DATA_DIR="${SCRIPT_DIR}/test_data"
+OUTPUT_DIR="${SCRIPT_DIR}/test_output/workflow"
 
 # Create output directory if it doesn't exist
 echo -e "${YELLOW}Creating output directory: ${OUTPUT_DIR}${NC}"
 mkdir -p "${OUTPUT_DIR}"
 
+# Create temporary inputs file for the workflow
+echo -e "${YELLOW}Creating temporary test inputs file...${NC}"
+TMP_INPUTS="${OUTPUT_DIR}/tmp_inputs.yaml"
+cat > "${TMP_INPUTS}" << EOF
+histology_file:
+  class: File
+  path: ${TEST_DATA_DIR}/histologies.tsv
+short_histology: "HGAT"
+count_file:
+  class: File
+  path: ${TEST_DATA_DIR}/gene-counts-rsem-expected_count-collapsed.rds
+methyl_file:
+  class: File
+  path: ${TEST_DATA_DIR}/methyl-beta-values.rds
+splice_file:
+  class: File
+  path: ${TEST_DATA_DIR}/psi-se-primary.func.rds
+gtf_file:
+  class: File
+  path: ${TEST_DATA_DIR}/gencode.v39.primary_assembly.annotation.gtf.gz
+num_features: 100
+max_k: 3
+EOF
+
 # Verify test data exists
 echo -e "${YELLOW}Verifying test data files...${NC}"
-for file in $(grep -o "/workspaces.*\.(tsv|rds|gz)" "${TEST_INPUTS}" | tr -d '"'); do
+for file in $(grep -o "${TEST_DATA_DIR}.*\.(tsv|rds|gz)" "${TMP_INPUTS}" | tr -d '"'); do
     if [ -f "$file" ]; then
         echo -e "  ${GREEN}✓${NC} $file"
     else
@@ -53,14 +78,24 @@ fi
 
 # Print information about the workflow
 echo -e "${YELLOW}Workflow file: ${WORKFLOW_PATH}${NC}"
-echo -e "${YELLOW}Test inputs: ${TEST_INPUTS}${NC}"
+echo -e "${YELLOW}Test inputs: ${TMP_INPUTS}${NC}"
 echo
+
+# Validate the workflow before running
+echo -e "${YELLOW}Validating workflow...${NC}"
+cwltool --validate "${WORKFLOW_PATH}"
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}Workflow validation passed.${NC}"
+else
+    echo -e "${RED}Workflow validation failed! Check the CWL file for errors.${NC}"
+    exit 1
+fi
 
 # Run the workflow
 echo -e "${GREEN}Starting workflow execution...${NC}"
 echo
 
-cwltool --outdir "${OUTPUT_DIR}" "${WORKFLOW_PATH}" "${TEST_INPUTS}"
+cwltool --outdir "${OUTPUT_DIR}" "${WORKFLOW_PATH}" "${TMP_INPUTS}"
 
 # Check if workflow completed successfully
 if [ $? -eq 0 ]; then
@@ -76,3 +111,16 @@ else
     echo -e "${RED}==================================================================${NC}"
     exit 1
 fi
+
+# Cleanup
+echo -e "${YELLOW}Cleaning up temporary files...${NC}"
+rm -f "${TMP_INPUTS}"
+
+# Print summary of test results
+echo -e "${GREEN}==================================================================${NC}"
+echo -e "${GREEN}      Test Workflow Summary                                      ${NC}"
+echo -e "${GREEN}==================================================================${NC}"
+echo -e "The following output files were generated:"
+ls -la "${OUTPUT_DIR}" | grep -v tmp_inputs.yaml | grep -v total
+echo
+echo -e "${GREEN}All tests completed successfully.${NC}"

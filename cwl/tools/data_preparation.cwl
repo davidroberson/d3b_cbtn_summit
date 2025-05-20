@@ -14,9 +14,9 @@ baseCommand: ["Rscript", "--vanilla"]
 requirements:
   - class: DockerRequirement
     # Use our custom image with all required packages pre-installed
-    dockerPull: "pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.0"
+    dockerPull: "pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.1"
     # When testing with sbpack, use your own repository
-    # dockerPull: "<your-dockerhub-username>/cbtn-summit-workflow:1.0.0"
+    # dockerPull: "<your-dockerhub-username>/cbtn-summit-workflow:1.0.1"
   - class: InlineJavascriptRequirement
   - class: InitialWorkDirRequirement
     listing:
@@ -81,6 +81,12 @@ requirements:
           cat('Filtering expression data \n')
           count_file <- opt$count_file
           count_mat <- readRDS(file = count_file)
+          
+          # Convert matrix to data frame if needed
+          if (is.matrix(count_mat)) {
+            count_mat <- as.data.frame(count_mat)
+          }
+          
           count_mat <- count_mat %>%
             dplyr::select(any_of(histology_file$Kids_First_Biospecimen_ID))
           
@@ -123,6 +129,12 @@ requirements:
           cat('Reading beta values and subsetting \n')
           methyl_file <- opt$methyl_file
           methyl_data <- readRDS(file = file.path(methyl_file))
+          
+          # Convert matrix to data frame if needed
+          if (is.matrix(methyl_data)) {
+            methyl_data <- as.data.frame(methyl_data)
+          }
+          
           methyl_data <- methyl_data %>%
             dplyr::select(any_of(histology_file$Kids_First_Biospecimen_ID))
           methyl_data <- methyl_data[complete.cases(methyl_data), ]
@@ -136,8 +148,15 @@ requirements:
             dplyr::arrange(Kids_First_Biospecimen_ID) %>%
             dplyr::group_by(sample_id) %>%
             dplyr::distinct(sample_id, .keep_all = T)
-          methyl_data <- methyl_data %>%
-            dplyr::select(any_of(unique_ids$Kids_First_Biospecimen_ID))
+            
+          # Convert back to matrix for column selection if needed
+          if (is.data.frame(methyl_data)) {
+            methyl_data <- as.matrix(methyl_data)
+          }
+          
+          # Use standard matrix subsetting for methyl_data
+          methyl_data <- methyl_data[, colnames(methyl_data) %in% unique_ids$Kids_First_Biospecimen_ID]
+          
           hist_methyl <- hist_methyl %>%
             tibble::column_to_rownames("Kids_First_Biospecimen_ID")
           hist_methyl <- hist_methyl[colnames(methyl_data), ]
@@ -161,6 +180,12 @@ requirements:
           cat('Reading splice data and filtering \n')
           splice_file <- opt$splice_file
           splice_mat <- readRDS(splice_file)
+          
+          # Convert matrix to data frame if needed
+          if (is.matrix(splice_mat)) {
+            splice_mat <- as.data.frame(splice_mat)
+          }
+          
           splice_mat <- splice_mat %>%
             dplyr::select(any_of(histology_file$Kids_First_Biospecimen_ID))
           splice_mat <- reshape2::melt(as.matrix(splice_mat),

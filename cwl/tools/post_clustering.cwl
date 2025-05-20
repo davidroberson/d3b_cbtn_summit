@@ -12,7 +12,7 @@ baseCommand: ["Rscript", "--vanilla"]
 
 requirements:
   - class: DockerRequirement
-    dockerPull: "pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.0"
+    dockerPull: "pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.1"
   - class: InitialWorkDirRequirement
     listing:
       - entryname: script.R
