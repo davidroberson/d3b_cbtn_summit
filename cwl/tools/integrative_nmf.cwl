@@ -13,7 +13,7 @@ baseCommand: ["Rscript", "--vanilla"]
 requirements:
   - class: DockerRequirement
     # Use our custom image with all required packages pre-installed
-    dockerPull: "pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.1"
+    dockerPull: "pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.3"
   - class: InlineJavascriptRequirement
   - class: InitialWorkDirRequirement
     listing:
