@@ -13,11 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install basic R packages
-RUN R -e "install.packages('optparse', repos='https://cran.rstudio.com/', dependencies = FALSE)"
-RUN R -e "install.packages('tidyverse', repos='https://cran.rstudio.com/', dependencies = FALSE)"
+RUN R -e "install.packages('optparse', repos='https://cran.rstudio.com/', dependencies = TRUE)"
+RUN R -e "install.packages('tidyverse', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 
 # Data preparation packages
-RUN R -e "install.packages('datawizard', repos='https://cran.rstudio.com/', dependencies = FALSE)"
+RUN R -e "install.packages('datawizard', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 RUN R -e "install.packages('reshape2', repos='https://cran.rstudio.com/', dependencies = FALSE)"
 RUN R -e "install.packages('matrixStats', repos='https://cran.rstudio.com/', dependencies = FALSE)"
 

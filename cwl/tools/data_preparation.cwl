@@ -25,27 +25,16 @@ requirements:
           #!/usr/bin/env Rscript
           # prepare files for multi-modal clustering
           
-          # Install required packages if not already installed
-          if (!require("optparse", quietly = TRUE))
-            install.packages("optparse", repos="https://cran.rstudio.com/")
-          if (!require("tidyverse", quietly = TRUE))
-            install.packages("tidyverse", repos="https://cran.rstudio.com/")
-          if (!require("datawizard", quietly = TRUE))
-            install.packages("datawizard", repos="https://cran.rstudio.com/")
-          if (!require("reshape2", quietly = TRUE))
-            install.packages("reshape2", repos="https://cran.rstudio.com/")
-          if (!require("rtracklayer", quietly = TRUE))
-            BiocManager::install("rtracklayer")
-          if (!require("matrixStats", quietly = TRUE))
-            install.packages("matrixStats", repos="https://cran.rstudio.com/")
+          # Load required packages
+          library(optparse)
+          library(tidyverse)
+          library(datawizard)
+          library(reshape2)
+          library(rtracklayer)
+          library(matrixStats)
           
           suppressPackageStartupMessages({
-            library(optparse)
-            library(tidyverse)
-            library(datawizard)
-            library(reshape2)
-            library(rtracklayer)
-            library(matrixStats)
+            # Packages already loaded above
           })
           
           mem.maxVSize(vsize = 102400)

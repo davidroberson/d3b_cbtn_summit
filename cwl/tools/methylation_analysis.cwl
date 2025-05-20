@@ -18,21 +18,7 @@ requirements:
       - entryname: script.R
         entry: |
           # Methylation analysis
-          # Install required packages if not already installed
-          if (!require("optparse", quietly = TRUE))
-            install.packages("optparse", repos="https://cran.rstudio.com/")
-          if (!require("tidyverse", quietly = TRUE))
-            install.packages("tidyverse", repos="https://cran.rstudio.com/")
-          if (!require("ggplot2", quietly = TRUE))
-            install.packages("ggplot2", repos="https://cran.rstudio.com/")
-          if (!require("limma", quietly = TRUE))
-            BiocManager::install("limma")
-          if (!require("missMethyl", quietly = TRUE))
-            BiocManager::install("missMethyl")
-          if (!require("IlluminaHumanMethylationEPICanno.ilm10b4.hg19", quietly = TRUE))
-            BiocManager::install("IlluminaHumanMethylationEPICanno.ilm10b4.hg19")
-            
-          # Load libraries
+          # Load required packages
           suppressPackageStartupMessages({
             library(optparse)
             library(tidyverse)

@@ -18,25 +18,17 @@ requirements:
       - entryname: script.R
         entry: |
           # Differential gene expression analysis
-          # Install required packages if not already installed
-          if (!require("optparse", quietly = TRUE))
-            install.packages("optparse", repos="https://cran.rstudio.com/")
-          if (!require("tidyverse", quietly = TRUE))
-            install.packages("tidyverse", repos="https://cran.rstudio.com/")
-          if (!require("ggplot2", quietly = TRUE))
-            install.packages("ggplot2", repos="https://cran.rstudio.com/")
-          if (!require("ggpubr", quietly = TRUE))
-            install.packages("ggpubr", repos="https://cran.rstudio.com/")
-          if (!require("msigdbr", quietly = TRUE))
-            install.packages("msigdbr", repos="https://cran.rstudio.com/")
-          if (!require("DESeq2", quietly = TRUE))
-            BiocManager::install("DESeq2")
-          if (!require("rtracklayer", quietly = TRUE))
-            BiocManager::install("rtracklayer")
-          if (!require("clusterProfiler", quietly = TRUE))
-            BiocManager::install("clusterProfiler")
-            
-          # Load libraries
+          # Load required packages
+          library(optparse)
+          library(tidyverse)
+          library(ggplot2)
+          library(ggpubr)
+          library(msigdbr)
+          library(DESeq2)
+          library(rtracklayer)
+          library(clusterProfiler)
+          
+          # Suppress package startup messages
           suppressPackageStartupMessages({
             library(optparse)
             library(tidyverse)

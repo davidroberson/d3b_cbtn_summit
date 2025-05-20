@@ -24,17 +24,12 @@ requirements:
           #!/usr/bin/env Rscript
           # run multi-modal clustering
           
-          # Install required packages if not already installed
-          if (!require("optparse", quietly = TRUE))
-            install.packages("optparse", repos="https://cran.rstudio.com/")
-          if (!require("tidyverse", quietly = TRUE))
-            install.packages("tidyverse", repos="https://cran.rstudio.com/")
-          if (!require("IntNMF", quietly = TRUE))
-            install.packages("IntNMF", repos="https://cran.rstudio.com/")
-          if (!require("matrixStats", quietly = TRUE))
-            install.packages("matrixStats", repos="https://cran.rstudio.com/")
-          if (!require("cluster", quietly = TRUE))
-            install.packages("cluster", repos="https://cran.rstudio.com/")
+          # Load required packages
+          library(optparse)
+          library(tidyverse)
+          library(IntNMF)
+          library(matrixStats)
+          library(cluster)
           
           suppressPackageStartupMessages({
             library(optparse)

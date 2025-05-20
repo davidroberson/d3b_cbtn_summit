@@ -10,7 +10,7 @@ DOCKER_TAG = v1.0.0
 
 # Paths
 WORKFLOW = multi_modal_clustering_workflow.cwl
-TEST_INPUTS = test_data/test_inputs.yaml
+TEST_INPUTS = ../tests/cwl/test_data/test_inputs.yaml
 TOOLS_DIR = tools
 CONTAINER_DIR = containers
 
@@ -27,7 +27,7 @@ validate:
 # Generate test data
 generate-test-data:
 	@echo "Generating test data..."
-	docker run --rm -v $(shell pwd):/data -w /data \
+	docker run --rm -v $(shell pwd)/../tests/cwl:/data -w /data \
 		bioconductor/bioconductor_docker:RELEASE_3_18 \
 		Rscript test_data/create_test_data_simple.R
 

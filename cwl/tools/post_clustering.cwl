@@ -18,25 +18,16 @@ requirements:
       - entryname: script.R
         entry: |
           # Post-clustering analysis
-          # Install required packages if not already installed
-          if (!require("optparse", quietly = TRUE))
-            install.packages("optparse", repos="https://cran.rstudio.com/")
-          if (!require("tidyverse", quietly = TRUE))
-            install.packages("tidyverse", repos="https://cran.rstudio.com/")
-          if (!require("survival", quietly = TRUE))
-            install.packages("survival", repos="https://cran.rstudio.com/")
-          if (!require("survminer", quietly = TRUE))
-            install.packages("survminer", repos="https://cran.rstudio.com/")
-          if (!require("corrplot", quietly = TRUE))
-            install.packages("corrplot", repos="https://cran.rstudio.com/")
-          if (!require("gridExtra", quietly = TRUE))
-            install.packages("gridExtra", repos="https://cran.rstudio.com/")
-          if (!require("circlize", quietly = TRUE))
-            install.packages("circlize", repos="https://cran.rstudio.com/")
-          if (!require("ggpubr", quietly = TRUE))
-            install.packages("ggpubr", repos="https://cran.rstudio.com/")
-          if (!require("mclust", quietly = TRUE))
-            install.packages("mclust", repos="https://cran.rstudio.com/")
+          # Load required packages
+          library(optparse)
+          library(tidyverse)
+          library(survival)
+          library(survminer)
+          library(corrplot)
+          library(gridExtra)
+          library(circlize)
+          library(ggpubr)
+          library(mclust)
           if (!require("ComplexHeatmap", quietly = TRUE))
             BiocManager::install("ComplexHeatmap")
             

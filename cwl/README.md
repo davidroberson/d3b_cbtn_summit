@@ -19,14 +19,14 @@ Two Dockerfile options are provided:
 
 ### Recommended Approach
 
-Use the `build_push_docker.sh` script to build and push the Docker image to the CAVATICA registry:
+Use the `utils/docker/build_push_docker.sh` script to build and push the Docker image to the CAVATICA registry:
 
 ```bash
 # Make the script executable if needed
-chmod +x build_push_docker.sh
+chmod +x utils/docker/build_push_docker.sh
 
 # Run the script
-./build_push_docker.sh
+./utils/docker/build_push_docker.sh
 ```
 
 This will:
