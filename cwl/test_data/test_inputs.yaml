@@ -1,0 +1,20 @@
+# Test input parameters for multi-omic clustering workflow
+histology_file:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/cwl/test_data/histologies.tsv
+short_histology: "HGAT"
+count_file:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/cwl/test_data/gene-counts-rsem-expected_count-collapsed.rds
+methyl_file:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/cwl/test_data/methyl-beta-values.rds
+splice_file:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/cwl/test_data/psi-se-primary.func.rds
+gtf_file:
+  class: File
+  path: /workspaces/d3b_cbtn_summit/cwl/test_data/gencode.v39.primary_assembly.annotation.gtf.gz
+num_features: 100
+max_k: 3
+

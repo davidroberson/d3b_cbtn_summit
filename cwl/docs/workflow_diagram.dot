@@ -1,0 +1,89 @@
+digraph CBTN_Workflow {
+  rankdir=LR;
+  
+  // Define node styles
+  node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial", margin=0.2];
+  edge [fontname="Arial"];
+  
+  // Input data subgraph
+  subgraph cluster_input {
+    label="INPUT DATA FILES";
+    style=filled;
+    color=lightgrey;
+    node [style=filled, fillcolor=lightyellow];
+    
+    input [label="Input Data\n• Histology Data\n• RNA-seq Counts\n• Methylation Values\n• Splicing PSI Values\n• Gene Annotations", shape=record];
+  }
+  
+  // Data preparation subgraph
+  subgraph cluster_prep {
+    label="DATA PREPARATION";
+    style=filled;
+    color=lightgrey;
+    node [style=filled, fillcolor=lightgreen];
+    
+    prep [label="Data Preparation\n1. Filter samples by histology\n2. Select top variable features\n3. Transform and normalize data", shape=record];
+  }
+  
+  // Clustering subgraph
+  subgraph cluster_cluster {
+    label="INTNMF CLUSTERING";
+    style=filled;
+    color=lightgrey;
+    node [style=filled, fillcolor=lightcoral];
+    
+    cluster [label="IntNMF Clustering\n1. Prepare data matrices\n2. Run IntNMF with multiple K\n3. Select optimal K\n4. Generate feature scores", shape=record];
+  }
+  
+  // Downstream analysis subgraph
+  subgraph cluster_analysis {
+    label="DOWNSTREAM ANALYSIS";
+    style=filled;
+    color=lightgrey;
+    node [style=filled, fillcolor=lightsalmon];
+    
+    dge [label="Differential Gene Expression\n(DESeq2 analysis)", shape=record];
+    methyl [label="Methylation Analysis\n(Limma analysis)", shape=record];
+    post [label="Post-clustering\n• Statistical tests\n• Visualizations\n• Survival analysis", shape=record];
+  }
+  
+  // Output subgraph
+  subgraph cluster_output {
+    label="OUTPUTS";
+    style=filled;
+    color=lightgrey;
+    node [style=filled, fillcolor=lightcyan];
+    
+    output [label="Outputs\n• Cluster assignments\n• Gene expression signatures\n• Methylation patterns\n• Survival plots\n• Pathway enrichment", shape=record];
+  }
+  
+  // Define workflow steps with edges
+  input -> prep [label="Filter & prepare"];
+  prep -> cluster [label="Run clustering"];
+  cluster -> dge [label="Analyze expression"];
+  cluster -> methyl [label="Analyze methylation"];
+  cluster -> post [label="Post-analysis"];
+  dge -> output [label="Expression results"];
+  methyl -> output [label="Methylation results"];
+  post -> output [label="Visualization"];
+  
+  // Add workflow environment footer
+  subgraph cluster_env {
+    label="WORKFLOW EXECUTION ENVIRONMENT";
+    style=filled;
+    color=lightgrey;
+    fontsize=12;
+    node [style=filled, fillcolor=white, fontsize=10];
+    
+    container [label="bioconductor/bioconductor_docker:RELEASE_3_18 Container", shape=record];
+    rpackages [label="Core R Packages\n• tidyverse\n• IntNMF\n• optparse\n• corrplot\n• survival", shape=record];
+    biopackages [label="Bioconductor Packages\n• DESeq2\n• limma\n• ComplexHeatmap\n• rtracklayer\n• clusterProfiler", shape=record];
+    scripts [label="Analysis Scripts\n• data_preparation.R\n• clustering.R\n• dge_analysis.R\n• methylation.R\n• post_clustering.R", shape=record];
+    cwl [label="CWL Execution\n• cwltool runtime\n• Step orchestration\n• Error handling", shape=record];
+    data [label="Data Management\n• Input staging\n• Output collection\n• Temp file cleanup", shape=record];
+    resources [label="Resource Config\n• Memory allocation\n• CPU allocation\n• Disk space mgmt", shape=record];
+    
+    {rank=same; rpackages; biopackages; scripts}
+    {rank=same; cwl; data; resources}
+  }
+}

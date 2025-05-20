@@ -1,0 +1,28 @@
+# Multi-Omic Clustering Workflow Inputs
+
+# Main input files
+histology_file:
+  class: File
+  path: /sbgenomics/project-files/opc-v15/v15/histologies.tsv
+
+count_file:
+  class: File
+  path: /sbgenomics/project-files/opc-v15/v15/gene-counts-rsem-expected_count-collapsed.rds
+
+methyl_file:
+  class: File
+  path: /sbgenomics/project-files/opc-v15/v15/methyl-beta-values.rds
+
+splice_file:
+  class: File
+  path: /sbgenomics/project-files/opc-v15/v15/psi-se-primary.func.rds
+
+gtf_file:
+  class: File
+  path: /sbgenomics/project-files/opc-v15/v15/gencode.v39.primary_assembly.annotation.gtf.gz
+
+# Parameters
+short_histology: "HGAT"
+num_features: 1000
+max_k: 10
+cluster_method: "intNMF"

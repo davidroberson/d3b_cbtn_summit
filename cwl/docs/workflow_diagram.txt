@@ -1,0 +1,52 @@
++----------------------+     +----------------------+     +----------------------+     +----------------------+     +----------------------+
+|                      |     |                      |     |                      |     |                      |     |                      |
+|   INPUT DATA FILES   |     |  DATA PREPARATION    |     |   INTNMF CLUSTERING  |     |  DOWNSTREAM ANALYSIS |     |       OUTPUTS        |
+|                      |     |                      |     |                      |     |                      |     |                      |
++----------------------+     +----------------------+     +----------------------+     +----------------------+     +----------------------+
+         |                              |                           |                            |                            |
+         |                              |                           |                            |                            |
+         v                              v                           v                            v                            v
++----------------------+     +----------------------+     +----------------------+     +----------------------+     +----------------------+
+| ● Histology Data     |     | 1. Filter samples by |     | 1. Prepare data     |---->| ● Diff. Gene Expr.   |---->| ● Cluster            |
+| ● RNA-seq Counts     |---->|    histology type    |---->|    matrices         |     |   - DESeq2 analysis  |     |   assignments        |
+| ● Methylation Values |     | 2. Select top        |     | 2. Run IntNMF with  |---->| ● Methylation Anal.  |---->| ● Gene expression    |
+| ● Splicing PSI Values|     |    variable features |     |    multiple K       |     |   - Limma analysis   |     |   signatures         |
+| ● Gene Annotations   |     | 3. Transform and     |     | 3. Select optimal K |---->| ● Post-clustering    |---->| ● Methylation        |
+|                      |     |    normalize data    |     | 4. Generate feature |     |   - Statistical tests|     |   patterns           |
+|                      |     |                      |     |    importance scores|     |   - Visualizations   |     | ● Survival plots     |
+|                      |     |                      |     |                      |     |   - Survival analysis|     | ● Pathway enrichment |
++----------------------+     +----------------------+     +----------------------+     +----------------------+     +----------------------+
+       INPUTS                        STEP 1                       STEP 2                       STEP 3                      OUTPUTS
+
+
++------------------------------------------------------------------------------------------------+
+|                                                                                                |
+|                             WORKFLOW EXECUTION ENVIRONMENT                                      |
+|                                                                                                |
+| +------------------------------------------------------------------------------------+         |
+| |                                                                                    |         |
+| |            bioconductor/bioconductor_docker:RELEASE_3_18 Container                 |         |
+| |                                                                                    |         |
+| | +------------------------+  +------------------------+  +------------------------+  |         |
+| | |                        |  |                        |  |                        |  |         |
+| | |   Core R Packages      |  |  Bioconductor Packages |  |   Analysis Scripts     |  |         |
+| | | - tidyverse            |  | - DESeq2               |  | - data_preparation.R   |  |         |
+| | | - IntNMF               |  | - limma                |  | - clustering.R         |  |         |
+| | | - optparse             |  | - ComplexHeatmap       |  | - dge_analysis.R       |  |         |
+| | | - corrplot             |  | - rtracklayer          |  | - methylation.R        |  |         |
+| | | - survival             |  | - clusterProfiler      |  | - post_clustering.R    |  |         |
+| | |                        |  |                        |  |                        |  |         |
+| | +------------------------+  +------------------------+  +------------------------+  |         |
+| |                                                                                    |         |
+| +------------------------------------------------------------------------------------+         |
+|                                                                                                |
+| +-----------------------+  +-----------------------+  +-----------------------+                |
+| |                       |  |                       |  |                       |                |
+| |   CWL Execution       |  |   Data Management     |  |   Resource Config     |                |
+| | - cwltool runtime     |  | - Input staging       |  | - Memory allocation   |                |
+| | - Step orchestration  |  | - Output collection   |  | - CPU allocation      |                |
+| | - Error handling      |  | - Temp file cleanup   |  | - Disk space mgmt     |                |
+| |                       |  |                       |  |                       |                |
+| +-----------------------+  +-----------------------+  +-----------------------+                |
+|                                                                                                |
++------------------------------------------------------------------------------------------------+
