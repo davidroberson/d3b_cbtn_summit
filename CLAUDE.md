@@ -7,18 +7,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This repository contains R scripts for multi-omic clustering analysis of CBTN (Children's Brain Tumor Network) data. It provides a complete workflow for analyzing and clustering high-grade astrocytomas (HGATs) using epigenomic, transcriptomic, and alternatively spliced transcriptome data.
 
 The repository is structured with two parallel implementations:
-1. R scripts in the `analyses/` directory for direct execution
+1. R scripts in the `src/cbtn_multiomics/` directory for direct execution
 2. A portable Common Workflow Language (CWL) implementation in the `cwl/` directory
 
 ## Analysis Workflow
 
 The workflow consists of multiple analysis modules, executed in the following order:
 
-1. **Data Preparation** (`/analyses/data_preparation/`): Filters and transforms RNA, methylation, and splicing data for HGAT samples.
-2. **IntNMF Clustering** (`/analyses/intNMF/`): Performs multi-modal clustering using the IntNMF algorithm.
-3. **Post-Clustering Associations** (`/analyses/post_clustering_associations/`): Generates survival plots, heatmaps, and association analyses.
-4. **Differential Gene Expression Analysis** (`/analyses/dge_pathway_analysis/`): Performs differential gene expression analysis and pathway enrichment.
-5. **Methylation Analysis** (`/analyses/methylation_analysis/`): Performs differential methylation analysis and pathway enrichment.
+1. **Data Preparation** (`/src/cbtn_multiomics/data_preparation/`): Filters and transforms RNA, methylation, and splicing data for HGAT samples.
+2. **IntNMF Clustering** (`/src/cbtn_multiomics/integrative_nmf/`): Performs multi-modal clustering using the IntNMF algorithm.
+3. **Post-Clustering Associations** (`/src/cbtn_multiomics/post_clustering/`): Generates survival plots, heatmaps, and association analyses.
+4. **Differential Gene Expression Analysis** (`/src/cbtn_multiomics/dge_analysis/`): Performs differential gene expression analysis and pathway enrichment.
+5. **Methylation Analysis** (`/src/cbtn_multiomics/methylation/`): Performs differential methylation analysis and pathway enrichment.
 
 ## Common Commands
 
@@ -29,29 +29,29 @@ The workflow consists of multiple analysis modules, executed in the following or
 Each analysis module can be run using its respective `run_analysis.sh` script:
 
 ```bash
-cd analyses/data_preparation
+cd src/cbtn_multiomics/data_preparation
 bash run_analysis.sh
 ```
 
 Similar commands apply for other modules:
 
 ```bash
-cd analyses/intNMF
+cd src/cbtn_multiomics/integrative_nmf
 bash run_analysis.sh
 ```
 
 ```bash
-cd analyses/post_clustering_associations
+cd src/cbtn_multiomics/post_clustering
 bash run_analysis.sh
 ```
 
 ```bash
-cd analyses/dge_pathway_analysis
+cd src/cbtn_multiomics/dge_analysis
 bash run_analysis.sh
 ```
 
 ```bash
-cd analyses/methylation_analysis
+cd src/cbtn_multiomics/methylation
 bash run_analysis.sh
 ```
 
@@ -60,7 +60,7 @@ bash run_analysis.sh
 Each module's R scripts can be run individually with appropriate parameters. For example:
 
 ```bash
-cd analyses/data_preparation
+cd src/cbtn_multiomics/data_preparation
 Rscript --vanilla 01-multi-modal-clustering-prepare-data.R \
 --histology_file $histology_file \
 --short_histology "HGAT" \
@@ -76,7 +76,7 @@ Rscript --vanilla 01-multi-modal-clustering-prepare-data.R \
 Each module has a setup script that installs the necessary R packages:
 
 ```bash
-cd analyses/[module_name]
+cd src/cbtn_multiomics/[module_name]
 Rscript --vanilla 00-setup.R
 ```
 
@@ -102,6 +102,30 @@ cd cwl
 cwltool multi_modal_clustering_workflow.cwl inputs.yaml
 ```
 
+#### Running CWL Tests
+
+The repository contains test scripts for each component of the workflow:
+
+```bash
+cd tests/cwl
+./run_all_tests.sh       # Run all tests
+./test_data_preparation.sh    # Test only the data preparation step
+./test_integrative_nmf.sh     # Test only the clustering step
+./test_dge_analysis.sh        # Test only the DGE analysis step
+./test_methylation_analysis.sh # Test only the methylation analysis step
+./test_post_clustering.sh     # Test only the post-clustering analysis step
+./test_workflow.sh           # Test the entire workflow end-to-end
+```
+
+#### Validating CWL Files
+
+You can validate all CWL files in the workflow:
+
+```bash
+cd cwl
+make validate
+```
+
 #### Building and Pushing the Docker Image
 
 The CWL workflow uses a Docker container with all required packages pre-installed:
@@ -111,7 +135,7 @@ The CWL workflow uses a Docker container with all required packages pre-installe
 ./utils/docker/build_push_docker.sh
 
 # Or build manually
-docker build -f Dockerfile.simple -t pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.0 .
+docker build -f containers/Dockerfile.simple -t pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.0 .
 docker push pgc-images.sbgenomics.com/david.roberson/cbtn-multiomic-clustering:v1.0.0
 ```
 
@@ -122,6 +146,10 @@ To upload the workflow and test data to CAVATICA:
 ```bash
 # Using the all-in-one Python script
 python utils/upload_scripts/upload_to_cavatica_all_in_one.py
+
+# Or using the Makefile
+cd cwl
+make upload-cavatica
 ```
 
 ## Key Dependencies
@@ -137,11 +165,19 @@ python utils/upload_scripts/upload_to_cavatica_all_in_one.py
 - ggplot2: Data visualization
 - ggpubr: Publication-ready plots
 - msigdbr: MSigDB gene sets
+- corrplot: Correlation plots
+- circlize: Circular visualization
+- mclust: Model-based clustering
+- survminer: Survival analysis visualization
 
 #### Bioconductor Packages
 - DESeq2: Differential gene expression analysis
 - rtracklayer: Genomic interval manipulation
 - clusterProfiler: Pathway enrichment analysis
+- limma: Linear models for microarray data
+- ComplexHeatmap: Complex heatmap visualization
+- missMethyl: Methylation analysis
+- IlluminaHumanMethylationEPICanno.ilm10b4.hg19: Methylation annotation
 
 ## Data Inputs
 
@@ -167,31 +203,31 @@ The outputs are saved in `results/` and `plots/` directories within each module.
 
 ## Project Structure
 
-### R Analysis Modules (`analyses/`)
+### R Analysis Modules (`src/cbtn_multiomics/`)
 
 - `data_preparation/`: Filters and transforms RNA, methylation, and splicing data
-- `intNMF/`: Performs multi-modal clustering using the IntNMF algorithm
-- `post_clustering_associations/`: Generates visualizations and statistical analyses
-- `dge_pathway_analysis/`: Performs differential gene expression and pathway analysis
-- `methylation_analysis/`: Performs methylation analysis
+- `integrative_nmf/`: Performs multi-modal clustering using the IntNMF algorithm
+- `post_clustering/`: Generates visualizations and statistical analyses
+- `dge_analysis/`: Performs differential gene expression and pathway analysis
+- `methylation/`: Performs methylation analysis
 
 ### CWL Workflow (`cwl/`)
 
 - `multi_modal_clustering_workflow.cwl`: Main workflow definition
 - `tools/`: Individual tool definitions for each analysis step
 - `test_data/`: Small test datasets and scripts to create them
-- `docs/`: Workflow documentation and diagrams
-
-### Utility Scripts (`utils/`)
-
-- `docker/build_push_docker.sh`: Builds and pushes the Docker image
-- `upload_scripts/`: Various Python scripts for uploading workflows to CAVATICA
+- `Makefile`: Commands for validating, testing, and deploying the workflow
 
 ### Tests (`tests/`)
 
 - `cwl/`: Test scripts and data for CWL workflow
 - `unit/`: Unit tests for individual components
 - `integration/`: Integration tests for the full workflow
+
+### Utility Scripts (`utils/`)
+
+- `docker/build_push_docker.sh`: Builds and pushes the Docker image
+- `upload_scripts/`: Various Python scripts for uploading workflows to CAVATICA
 
 ## Troubleshooting
 
