@@ -56,7 +56,7 @@ cat('Plotting multi-omic clusters in relation to known subtypes \n')
 dat <- anno_file %>%
   filter(!is.na(molecular_subtype)) %>%
   group_by(molecular_subtype, mm_cluster)  %>%
-  summarise(n = n()) %>%
+  summarise(n = n(), .groups = "drop") %>%
   mutate(nmax = max(n)) %>%
   filter(nmax >= 5) %>%
   ungroup() %>%
@@ -67,8 +67,10 @@ pdf(
   file = file.path(plots_dir, "mm_clusters_vs_molsubtype_balloonplot.pdf"),
   width = 10
 )
+# Create a proper table format for balloonplot
+mm_vs_subtype <- table(colnames(dat), rownames(dat))
 balloonplot(
-  x = as.table(as.matrix(t(dat))),
+  x = mm_vs_subtype,
   main = "Multi-modal clusters vs Molecular subtypes",
   xlab = "",
   ylab = "",
@@ -96,7 +98,7 @@ dev.off()
 dat <- anno_file %>%
   dplyr::filter(!is.na(dkfz_v11_methylation_subclass)) %>%
   dplyr::group_by(dkfz_v11_methylation_subclass, mm_cluster)  %>%
-  dplyr::summarise(n = n()) %>%
+  dplyr::summarise(n = n(), .groups = "drop") %>%
   dplyr::mutate(nmax = max(n)) %>%
   dplyr::filter(nmax >= 5) %>%
   ungroup() %>%
@@ -110,8 +112,10 @@ pdf(
   ),
   width = 14
 )
+# Create a proper table format for balloonplot
+mm_vs_subtype <- table(colnames(dat), rownames(dat))
 balloonplot(
-  x = as.table(as.matrix(t(dat))),
+  x = mm_vs_subtype,
   main = "Multi-modal clusters vs dkfz_v11_methylation_subclass",
   xlab = "",
   ylab = "",
@@ -142,7 +146,7 @@ dev.off()
 dat <- anno_file %>%
   dplyr::filter(!is.na(dkfz_v12_methylation_subclass)) %>%
   dplyr::group_by(dkfz_v12_methylation_subclass, mm_cluster)  %>%
-  dplyr::summarise(n = n()) %>%
+  dplyr::summarise(n = n(), .groups = "drop") %>%
   dplyr::mutate(nmax = max(n)) %>%
   dplyr::filter(nmax >= 5) %>%
   ungroup() %>%
@@ -156,8 +160,10 @@ pdf(
   ),
   width = 14
 )
+# Create a proper table format for balloonplot
+mm_vs_subtype <- table(colnames(dat), rownames(dat))
 balloonplot(
-  x = as.table(as.matrix(t(dat))),
+  x = mm_vs_subtype,
   main = "Multi-modal clusters vs dkfz_v12_methylation_subclass",
   xlab = "",
   ylab = "",

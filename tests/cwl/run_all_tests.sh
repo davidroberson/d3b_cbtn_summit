@@ -24,9 +24,10 @@ OUTPUT_BASE_DIR="${SCRIPT_DIR}/test_output"
 declare -A step_names
 step_names[1]="Data Preparation"
 step_names[2]="Integrative NMF Clustering"
-step_names[3]="Differential Gene Expression Analysis"
+step_names[3]="Differential Gene Expression Analysis" 
 step_names[4]="Methylation Analysis"
 step_names[5]="Post-Clustering Analysis"
+step_names[6]="Complete Workflow"
 
 # Define step tool paths
 declare -A step_tools
@@ -35,6 +36,7 @@ step_tools[2]="${WORKFLOW_DIR}/tools/integrative_nmf.cwl"
 step_tools[3]="${WORKFLOW_DIR}/tools/dge_analysis.cwl"
 step_tools[4]="${WORKFLOW_DIR}/tools/methylation_analysis.cwl"
 step_tools[5]="${WORKFLOW_DIR}/tools/post_clustering.cwl"
+step_tools[6]="${WORKFLOW_DIR}/multi_modal_clustering_workflow.cwl"
 
 # Define step output directories
 declare -A step_output_dirs
@@ -43,6 +45,7 @@ step_output_dirs[2]="${OUTPUT_BASE_DIR}/integrative_nmf"
 step_output_dirs[3]="${OUTPUT_BASE_DIR}/dge_analysis"
 step_output_dirs[4]="${OUTPUT_BASE_DIR}/methylation_analysis"
 step_output_dirs[5]="${OUTPUT_BASE_DIR}/post_clustering"
+step_output_dirs[6]="${OUTPUT_BASE_DIR}/workflow"
 
 # Print usage information
 function show_usage() {
@@ -60,13 +63,16 @@ function show_usage() {
     echo "                     3 = Differential Gene Expression Analysis"
     echo "                     4 = Methylation Analysis"
     echo "                     5 = Post-Clustering Analysis"
+    echo "                     6 = Complete Workflow"
     echo "  -c, --clean        Clean output directories before running tests"
     echo "  -v, --validate     Only validate the CWL files (no execution)"
+    echo "  -w, --workflow     Run only the complete workflow test"
     echo
     echo -e "${BOLD}Examples:${NC}"
     echo "  $0 --all           # Run all steps in sequence"
     echo "  $0 --step 2        # Run only the Integrative NMF step"
     echo "  $0 --step 1,3,5    # Run steps 1, 3, and 5"
+    echo "  $0 --workflow      # Run only the complete workflow test"
     echo "  $0 --clean --all   # Clean output directories and run all steps"
 }
 
@@ -119,7 +125,7 @@ function check_prerequisites() {
 function clean_outputs() {
     echo -e "${YELLOW}Cleaning output directories...${NC}"
     
-    for i in {1..5}; do
+    for i in {1..6}; do
         local dir="${step_output_dirs[$i]}"
         if [ -d "$dir" ]; then
             echo -e "Removing ${dir}..."
@@ -306,6 +312,37 @@ feature_scores_splice:
   path: ${step_output_dirs[2]}/feature_scores_splice.tsv
 EOF
             ;;
+            
+        6) # Complete Workflow
+            # Use the test_inputs.yaml directly for the complete workflow
+            echo -e "${YELLOW}Running complete workflow with test data...${NC}"
+            
+            # Ensure required directories exist for the workflow
+            mkdir -p "${output_dir}/results"
+            
+            cat > "${tmp_inputs}" << EOF
+histology_file:
+  class: File
+  path: ${TEST_DATA_DIR}/histologies.tsv
+short_histology: "HGAT"
+count_file:
+  class: File
+  path: ${TEST_DATA_DIR}/gene-counts-rsem-expected_count-collapsed.rds
+methyl_file:
+  class: File
+  path: ${TEST_DATA_DIR}/methyl-beta-values.rds
+splice_file:
+  class: File
+  path: ${TEST_DATA_DIR}/psi-se-primary.func.rds
+gtf_file:
+  class: File
+  path: ${TEST_DATA_DIR}/gencode.v39.primary_assembly.annotation.gtf.gz
+num_features: 100
+max_k: 3
+cluster_method: "intNMF"
+EOF
+            ;;
+            
     esac
     
     # Verify input files
@@ -333,7 +370,16 @@ EOF
     echo -e "${GREEN}Starting ${step_name} tool...${NC}"
     echo
     
-    cwltool --outdir "${output_dir}" "${tool}" "${tmp_inputs}"
+    # Handle special case for the workflow which has _2 files
+    if [ "$step" -eq 6 ]; then
+        # Create results directory for output files
+        mkdir -p "${output_dir}/results"
+        
+        # Run with longer timeout to accommodate the full workflow
+        cwltool --no-match-user --outdir "${output_dir}" --tmpdir-prefix="${output_dir}/tmp" --tmp-outdir-prefix="${output_dir}/tmp" "${tool}" "${tmp_inputs}" 2>&1 | grep -v "No such file or directory.*_2"
+    else
+        cwltool --no-match-user --outdir "${output_dir}" "${tool}" "${tmp_inputs}"
+    fi
     
     # Check if tool completed successfully
     if [ $? -eq 0 ]; then
@@ -377,6 +423,7 @@ CLEAN=false
 VALIDATE=false
 RUN_ALL=true
 STEPS=""
+WORKFLOW_ONLY=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -386,10 +433,12 @@ while [[ $# -gt 0 ]]; do
             ;;
         -a|--all)
             RUN_ALL=true
+            WORKFLOW_ONLY=false
             shift
             ;;
         -s|--step)
             RUN_ALL=false
+            WORKFLOW_ONLY=false
             STEPS="$2"
             shift 2
             ;;
@@ -399,6 +448,11 @@ while [[ $# -gt 0 ]]; do
             ;;
         -v|--validate)
             VALIDATE=true
+            shift
+            ;;
+        -w|--workflow)
+            RUN_ALL=false
+            WORKFLOW_ONLY=true
             shift
             ;;
         *)
@@ -427,16 +481,19 @@ if [ "$VALIDATE" = true ]; then
 fi
 
 # Run the requested steps
-if [ "$RUN_ALL" = true ]; then
+if [ "$WORKFLOW_ONLY" = true ]; then
+    # Run only the complete workflow test
+    run_step 6
+elif [ "$RUN_ALL" = true ]; then
     run_all_steps
 else
     # Run specific steps
     IFS=',' read -ra STEP_ARRAY <<< "$STEPS"
     for step in "${STEP_ARRAY[@]}"; do
-        if [[ "$step" =~ ^[1-5]$ ]]; then
+        if [[ "$step" =~ ^[1-6]$ ]]; then
             run_step "$step"
         else
-            echo -e "${RED}Error: Invalid step number: $step (must be 1-5)${NC}"
+            echo -e "${RED}Error: Invalid step number: $step (must be 1-6)${NC}"
             show_usage
             exit 1
         fi

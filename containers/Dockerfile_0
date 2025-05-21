@@ -33,7 +33,6 @@ RUN R -e "install.packages('circlize', repos='https://cran.rstudio.com/', depend
 
 # Statistical analysis packages
 RUN R -e "install.packages('survival', repos='https://cran.rstudio.com/', dependencies = TRUE)"
-RUN R -e "install.packages('survminer', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 RUN R -e "install.packages('mclust', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 RUN R -e "install.packages('msigdbr', repos='https://cran.rstudio.com/', dependencies = TRUE)"
 

@@ -1,0 +1,7 @@
+Chi-square test of independence between multi-modal clusters and molecular subtypes:
+X-squared = 2.52098765432099
+df = 4
+p-value = 0.640881613047519
+
+Adjusted Rand Index between multi-modal clusters and molecular subtypes:
+ARI = -0.0382513661202186

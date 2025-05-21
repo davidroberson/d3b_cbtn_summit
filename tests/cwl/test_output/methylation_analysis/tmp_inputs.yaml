@@ -1,9 +1,0 @@
-methyl_file:
-  class: File
-  path: /workspaces/d3b_cbtn_summit/tests/cwl/test_data/methyl-beta-values.rds
-cluster_file:
-  class: File
-  path: /workspaces/d3b_cbtn_summit/tests/cwl/test_output/integrative_nmf/intnmf_clusters.tsv
-histology_file:
-  class: File
-  path: /workspaces/d3b_cbtn_summit/tests/cwl/test_data/histologies.tsv

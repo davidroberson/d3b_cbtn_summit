@@ -58,7 +58,7 @@ inputs:
 
 steps:
   data_preparation:
-    run: tools/data_preparation.cwl
+    run: tools/data_preparation_docker.cwl
     in:
       histology_file: histology_file
       short_histology: short_histology
@@ -74,7 +74,7 @@ steps:
       - samples_map
 
   cluster_analysis:
-    run: tools/integrative_nmf.cwl
+    run: tools/integrative_nmf_docker.cwl
     in:
       samples_map: data_preparation/samples_map
       rna_data: data_preparation/rna_data
@@ -91,30 +91,28 @@ steps:
       - silhouette_plot
 
   differential_expression:
-    run: tools/dge_analysis.cwl
+    run: tools/dge_analysis_docker.cwl
     in:
       expr_mat: count_file
       gtf_file: gtf_file
       cluster_file: cluster_analysis/cluster_assignments
-      histology_file: histology_file
     out:
       - deseq_results
       - pathway_results
       - pathway_plots
 
   methylation_analysis:
-    run: tools/methylation_analysis.cwl
+    run: tools/methylation_analysis_docker.cwl
     in:
       methyl_file: methyl_file
       cluster_file: cluster_analysis/cluster_assignments
-      histology_file: histology_file
     out:
       - methylation_results
       - pathway_results
       - pathway_plots
 
   post_clustering:
-    run: tools/post_clustering.cwl
+    run: tools/post_clustering_docker.cwl
     in:
       cluster_file: cluster_analysis/cluster_assignments
       histology_file: histology_file
@@ -196,6 +194,7 @@ outputs:
     type: File[]
     doc: "Expression pathway analysis results"
     outputSource: differential_expression/pathway_results
+    pickValue: all_non_null
   
   expression_pathway_plots:
     type: Directory
@@ -207,6 +206,7 @@ outputs:
     type: File[]
     doc: "Differential methylation analysis results"
     outputSource: methylation_analysis/methylation_results
+    pickValue: all_non_null
   
   methylation_pathway_results:
     type: File
