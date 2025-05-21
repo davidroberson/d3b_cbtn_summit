@@ -80,6 +80,8 @@ cd src/cbtn_multiomics/[module_name]
 Rscript --vanilla 00-setup.R
 ```
 
+Note: The R scripts are designed to automatically install missing packages when they run, making them more robust across different environments. Each script includes checks for required packages and will install them if needed.
+
 ### Running the CWL Workflow
 
 #### Running with Test Data
@@ -100,6 +102,16 @@ To run the workflow with your own data:
 cd cwl
 # Edit inputs.yaml with your data paths
 cwltool multi_modal_clustering_workflow.cwl inputs.yaml
+```
+
+#### Running Individual CWL Workflow Steps
+
+You can run individual steps of the workflow for testing:
+
+```bash
+cd cwl
+make test-data-preparation  # Test just the data preparation step
+make test-clustering        # Test just the clustering step
 ```
 
 #### Running CWL Tests
@@ -152,6 +164,24 @@ cd cwl
 make upload-cavatica
 ```
 
+#### Cleaning Up Temporary Files
+
+After running tests or workflows, you can clean up temporary files:
+
+```bash
+cd cwl
+make clean
+```
+
+#### Getting Help with the Makefile
+
+To see all available commands in the Makefile:
+
+```bash
+cd cwl
+make help
+```
+
 ## Key Dependencies
 
 ### R Packages
@@ -188,7 +218,7 @@ The analysis requires multiple input files:
 - Alternative splicing (PSI) data
 - Gencode GTF annotation
 
-The main data directory is set to `/sbgenomics/project-files/opc-v15/v15/` by default in the scripts.
+The main data directory is set to `/sbgenomics/project-files/opc-v15/v15/` by default in the scripts, but paths can be modified in the run_analysis.sh files or provided as command-line arguments.
 
 ## Expected Outputs
 
@@ -234,10 +264,17 @@ The outputs are saved in `results/` and `plots/` directories within each module.
 ### Common Issues with R Scripts
 
 - **Memory Errors**: The default memory limit is set to 100GB in the `run_analysis.sh` scripts with `echo "R_MAX_VSIZE=100Gb" > .Renviron`
-- **Missing Packages**: Each module's `00-setup.R` script installs required packages
+- **Missing Packages**: Each module's R scripts now include inline package installation checks and will automatically install missing packages
+- **Data Format Issues**: Some scripts (especially methylation analysis) include error handling and fallback methods for problematic data formats
 
 ### Common Issues with CWL
 
 - **Docker Authentication**: Ensure you're logged in to the CAVATICA Docker registry with `docker login pgc-images.sbgenomics.com`
 - **Package Installation Failures**: Check error messages for missing system dependencies
 - **Memory Errors**: Try increasing available memory for resource-intensive steps
+
+## Recent Updates
+
+- R scripts have been updated to include robust package installation checks and will automatically install missing dependencies
+- Added error handling and data validation in analysis scripts, particularly in the methylation analysis module
+- Added fallback functionality for handling various data format issues

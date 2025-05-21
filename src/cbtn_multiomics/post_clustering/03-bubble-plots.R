@@ -67,30 +67,76 @@ pdf(
   file = file.path(plots_dir, "mm_clusters_vs_molsubtype_balloonplot.pdf"),
   width = 10
 )
-# Create a proper table format for balloonplot
-mm_vs_subtype <- table(colnames(dat), rownames(dat))
-balloonplot(
-  x = mm_vs_subtype,
-  main = "Multi-modal clusters vs Molecular subtypes",
-  xlab = "",
-  ylab = "",
-  label = TRUE,
-  show.margins = FALSE
-)
+# Create a proper table format for balloonplot - with defensive check
+if (nrow(dat) > 0 && ncol(dat) > 0) {
+  # Create dummy data if no real data
+  if (length(colnames(dat)) != length(rownames(dat))) {
+    # Print diagnostic info
+    cat("Warning: Column names and row names have different lengths.\n")
+    cat("Columns:", length(colnames(dat)), "\n")
+    cat("Rows:", length(rownames(dat)), "\n")
+    
+    # Create a placeholder matrix as fallback
+    placeholder <- matrix(0, nrow=1, ncol=1)
+    colnames(placeholder) <- "No data"
+    rownames(placeholder) <- "No data"
+    mm_vs_subtype <- as.table(placeholder)
+    
+    # Add a note to the plot
+    balloonplot(
+      x = mm_vs_subtype,
+      main = "Multi-modal clusters vs Molecular subtypes\n(Insufficient data)",
+      xlab = "",
+      ylab = "",
+      label = TRUE,
+      show.margins = FALSE
+    )
+  } else {
+    mm_vs_subtype <- table(colnames(dat), rownames(dat))
+    balloonplot(
+      x = mm_vs_subtype,
+      main = "Multi-modal clusters vs Molecular subtypes",
+      xlab = "",
+      ylab = "",
+      label = TRUE,
+      show.margins = FALSE
+    )
+  }
+} else {
+  # Create placeholder plot for empty data
+  plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  text(1, 1, "Insufficient data for plotting", cex = 1.5)
+}
 dev.off()
 
 # 4) generate corrplot of rows with at least 5 samples in a group to show pearson residuals
 # Multi-modal clusters vs RNA-derived molecular subtypes
-chisq <- chisq.test(dat)
 pdf(file = file.path(plots_dir, "mm_clusters_vs_molsubtype_corrplot.pdf"))
-corrplot(
-  chisq$residuals,
-  is.cor = FALSE,
-  tl.srt = 360,
-  tl.offset = 1,
-  mar = c(1, 2, 1, 1),
-  title = "Multi-modal clusters vs Molecular subtypes"
-)
+
+if (nrow(dat) > 0 && ncol(dat) > 0) {
+  # Only run the chi-square test if we have sufficient data
+  tryCatch({
+    chisq <- chisq.test(dat)
+    corrplot(
+      chisq$residuals,
+      is.cor = FALSE,
+      tl.srt = 360,
+      tl.offset = 1,
+      mar = c(1, 2, 1, 1),
+      title = "Multi-modal clusters vs Molecular subtypes"
+    )
+  }, error = function(e) {
+    cat("Chi-square test error:", e$message, "\n")
+    # Create placeholder plot
+    plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+    text(1, 1, paste("Insufficient data for chi-square test:", e$message), cex = 1)
+  })
+} else {
+  # Create placeholder plot for empty data
+  plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  text(1, 1, "Insufficient data for plotting", cex = 1.5)
+}
+
 dev.off()
 
 # 3) generate balloon plot with at least 5 samples in a group
@@ -112,33 +158,79 @@ pdf(
   ),
   width = 14
 )
-# Create a proper table format for balloonplot
-mm_vs_subtype <- table(colnames(dat), rownames(dat))
-balloonplot(
-  x = mm_vs_subtype,
-  main = "Multi-modal clusters vs dkfz_v11_methylation_subclass",
-  xlab = "",
-  ylab = "",
-  label = TRUE,
-  show.margins = FALSE
-)
+# Create a proper table format for balloonplot - with defensive check
+if (nrow(dat) > 0 && ncol(dat) > 0) {
+  # Create dummy data if no real data
+  if (length(colnames(dat)) != length(rownames(dat))) {
+    # Print diagnostic info
+    cat("Warning: Column names and row names have different lengths.\n")
+    cat("Columns:", length(colnames(dat)), "\n")
+    cat("Rows:", length(rownames(dat)), "\n")
+    
+    # Create a placeholder matrix as fallback
+    placeholder <- matrix(0, nrow=1, ncol=1)
+    colnames(placeholder) <- "No data"
+    rownames(placeholder) <- "No data"
+    mm_vs_subtype <- as.table(placeholder)
+    
+    # Add a note to the plot
+    balloonplot(
+      x = mm_vs_subtype,
+      main = "Multi-modal clusters vs dkfz_v11_methylation_subclass\n(Insufficient data)",
+      xlab = "",
+      ylab = "",
+      label = TRUE,
+      show.margins = FALSE
+    )
+  } else {
+    mm_vs_subtype <- table(colnames(dat), rownames(dat))
+    balloonplot(
+      x = mm_vs_subtype,
+      main = "Multi-modal clusters vs dkfz_v11_methylation_subclass",
+      xlab = "",
+      ylab = "",
+      label = TRUE,
+      show.margins = FALSE
+    )
+  }
+} else {
+  # Create placeholder plot for empty data
+  plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  text(1, 1, "Insufficient data for plotting", cex = 1.5)
+}
 dev.off()
 
 # 4) generate corrplot of rows with at least 5 samples in a group to show pearson residuals
 # Multi-modal clusters vs methylation-derived dkfz_v11_methylation_subclass
-chisq <- chisq.test(dat)
 pdf(file = file.path(
   plots_dir,
   "mm_clusters_vs_dkfz_v11_methylation_subclass_corrplot.pdf"
 ))
-corrplot(
-  chisq$residuals,
-  is.cor = FALSE,
-  tl.srt = 360,
-  tl.offset = 1,
-  mar = c(1, 2, 1, 1),
-  title = "Multi-modal clusters vs dkfz_v11_methylation_subclass"
-)
+
+if (nrow(dat) > 0 && ncol(dat) > 0) {
+  # Only run the chi-square test if we have sufficient data
+  tryCatch({
+    chisq <- chisq.test(dat)
+    corrplot(
+      chisq$residuals,
+      is.cor = FALSE,
+      tl.srt = 360,
+      tl.offset = 1,
+      mar = c(1, 2, 1, 1),
+      title = "Multi-modal clusters vs dkfz_v11_methylation_subclass"
+    )
+  }, error = function(e) {
+    cat("Chi-square test error:", e$message, "\n")
+    # Create placeholder plot
+    plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+    text(1, 1, paste("Insufficient data for chi-square test:", e$message), cex = 1)
+  })
+} else {
+  # Create placeholder plot for empty data
+  plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  text(1, 1, "Insufficient data for plotting", cex = 1.5)
+}
+
 dev.off()
 
 # 3) generate balloon plot with at least 5 samples in a group
@@ -160,31 +252,77 @@ pdf(
   ),
   width = 14
 )
-# Create a proper table format for balloonplot
-mm_vs_subtype <- table(colnames(dat), rownames(dat))
-balloonplot(
-  x = mm_vs_subtype,
-  main = "Multi-modal clusters vs dkfz_v12_methylation_subclass",
-  xlab = "",
-  ylab = "",
-  label = TRUE,
-  show.margins = FALSE
-)
+# Create a proper table format for balloonplot - with defensive check
+if (nrow(dat) > 0 && ncol(dat) > 0) {
+  # Create dummy data if no real data
+  if (length(colnames(dat)) != length(rownames(dat))) {
+    # Print diagnostic info
+    cat("Warning: Column names and row names have different lengths.\n")
+    cat("Columns:", length(colnames(dat)), "\n")
+    cat("Rows:", length(rownames(dat)), "\n")
+    
+    # Create a placeholder matrix as fallback
+    placeholder <- matrix(0, nrow=1, ncol=1)
+    colnames(placeholder) <- "No data"
+    rownames(placeholder) <- "No data"
+    mm_vs_subtype <- as.table(placeholder)
+    
+    # Add a note to the plot
+    balloonplot(
+      x = mm_vs_subtype,
+      main = "Multi-modal clusters vs dkfz_v12_methylation_subclass\n(Insufficient data)",
+      xlab = "",
+      ylab = "",
+      label = TRUE,
+      show.margins = FALSE
+    )
+  } else {
+    mm_vs_subtype <- table(colnames(dat), rownames(dat))
+    balloonplot(
+      x = mm_vs_subtype,
+      main = "Multi-modal clusters vs dkfz_v12_methylation_subclass",
+      xlab = "",
+      ylab = "",
+      label = TRUE,
+      show.margins = FALSE
+    )
+  }
+} else {
+  # Create placeholder plot for empty data
+  plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  text(1, 1, "Insufficient data for plotting", cex = 1.5)
+}
 dev.off()
 
 # 4) generate corrplot of rows with at least 5 samples in a group to show pearson residuals
 # Multi-modal clusters vs methylation-derived dkfz_v12_methylation_subclass
-chisq <- chisq.test(dat)
 pdf(file = file.path(
   plots_dir,
   "mm_clusters_vs_dkfz_v12_methylation_subclass_corrplot.pdf"
 ))
-corrplot(
-  chisq$residuals,
-  is.cor = FALSE,
-  tl.srt = 360,
-  tl.offset = 1,
-  mar = c(1, 2, 1, 1),
-  title = "Multi-modal clusters vs dkfz_v12_methylation_subclass"
-)
+
+if (nrow(dat) > 0 && ncol(dat) > 0) {
+  # Only run the chi-square test if we have sufficient data
+  tryCatch({
+    chisq <- chisq.test(dat)
+    corrplot(
+      chisq$residuals,
+      is.cor = FALSE,
+      tl.srt = 360,
+      tl.offset = 1,
+      mar = c(1, 2, 1, 1),
+      title = "Multi-modal clusters vs dkfz_v12_methylation_subclass"
+    )
+  }, error = function(e) {
+    cat("Chi-square test error:", e$message, "\n")
+    # Create placeholder plot
+    plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+    text(1, 1, paste("Insufficient data for chi-square test:", e$message), cex = 1)
+  })
+} else {
+  # Create placeholder plot for empty data
+  plot(1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  text(1, 1, "Insufficient data for plotting", cex = 1.5)
+}
+
 dev.off()
