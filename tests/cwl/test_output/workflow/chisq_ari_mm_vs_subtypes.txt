@@ -1,7 +1,24 @@
-Chi-square test of independence between multi-modal clusters and molecular subtypes:
-X-squared = 2.52098765432099
-df = 4
-p-value = 0.640881613047519
+[1] "Multi-modal clusters vs RNA-derived molecular_subtypes"
+[1] -0.03825137
+[1] "Multi-modal clusters vs dkfz_v11_methylation_subclass"
+[1] "Column 'dkfz_v11_methylation_subclass' not found in data"
+[1] "Multi-modal clusters vs dkfz_v12_methylation_subclass"
+[1] "Column 'dkfz_v12_methylation_subclass' not found in data"
 
-Adjusted Rand Index between multi-modal clusters and molecular subtypes:
-ARI = -0.0382513661202186
+
+[1] "Multi-modal clusters vs RNA-derived molecular_subtypes"
+          
+           1 2 3
+  Subtype1 4 1 1
+  Subtype2 4 2 3
+  Subtype3 1 2 2
+
+	Pearson's Chi-squared test
+
+data:  anno_file$molecular_subtype and anno_file$mm_cluster
+X-squared = 2.521, df = 4, p-value = 0.6409
+
+[1] "Multi-modal clusters vs dkfz_v11_methylation_subclass"
+[1] "Column 'dkfz_v11_methylation_subclass' not found in data"
+[1] "Multi-modal clusters vs dkfz_v12_methylation_subclass"
+[1] "Column 'dkfz_v12_methylation_subclass' not found in data"

@@ -7,30 +7,68 @@ suppressPackageStartupMessages({
 
 # parse command line options
 option_list <- list(
-  make_option(c("--count_file"), type = "character", help = "Counts file (.tsv)"),
+  make_option(c("--rna_file"), type = "character", help = "RNA counts file (.tsv)"),
   make_option(c("--methyl_file"), type = "character", help = "Methylation file (.tsv)"),
   make_option(c("--splice_file"), type = "character", help = "PSI values (.tsv)"),
   make_option(c("--samples_map"), type = "character", help = "Mapping file with bs ids and samples ids (.tsv)"),
-  make_option(c("--output_dir"), type = "character", help = "path to results directory"),
-  make_option(c("--plots_dir"), type = "character", help = "path to plots directory")
+  make_option(c("--results_dir"), type = "character", help = "path to results directory"),
+  make_option(c("--plots_dir"), type = "character", help = "path to plots directory"),
+  make_option(c("--max_k"), type = "integer", default = 10, help = "Maximum number of clusters to try"),
+  make_option(c("--cluster_method"), type = "character", default = "intNMF", help = "Clustering method to use")
 )
 opt <- parse_args(OptionParser(option_list = option_list, add_help_option = TRUE))
 
 # output directory
-output_dir <- opt$output_dir
+output_dir <- opt$results_dir
 dir.create(output_dir, showWarnings = F, recursive = T)
 
 # plots directory
 plots_dir <- opt$plots_dir
 dir.create(plots_dir, showWarnings = F, recursive = T)
 
-# source function
-source(file.path("utils", "run_clusterstats.R"))
+# Define the run_clusterstats function inline since we can't rely on working directory
+run_clusterstats <- function(dat, output_dir, k_value) {
+  # if weight is not assigned, use default
+  if (is.null(wt)) {
+    wt = if (is.list(dat))
+      rep(1, length(dat))
+    else
+      1
+  }
+  
+  # do this for each cluster
+  # run Nonnegative Matrix Factorization of Multiple data using Nonnegative Alternating Least Square
+  nmf_fname <- file.path(output_dir, "intnmf_fit_all.rds")
+  
+  # Normalize by each omics type's frobenius norm
+  count_data_norm <- dat[["rna_data"]] / norm(as.matrix(dat[["rna_data"]]), type="F")
+  methyl_data_norm <- dat[["methyl_data"]] / norm(as.matrix(dat[["methyl_data"]]), type="F")
+  splice_data_norm <- dat[["splice_data"]] / norm(as.matrix(dat[["splice_data"]]), type="F")
+  
+  nmf_output <- nmf.mnnals(dat = list(count_data_norm, methyl_data_norm, splice_data_norm), 
+                         k = k_value, 
+                         maxiter = 200, 
+                         st.count = 20, 
+                         n.ini = 30, 
+                         ini.nndsvd = TRUE, 
+                         seed = TRUE,
+                         wt=if(is.list(dat)) rep(1,length(dat)) else 1)
+  
+  # add modality names instead of H1, H2... for better clarity in downstream plotting
+  names(nmf_output$H) <- names(dat)
+  
+  # save best fit to file
+  saveRDS(object = nmf_output,
+          file = file.path(output_dir, "intnmf_best_fit.rds"))
+  
+  # return the nmf output corresponding to the most optimal k for downstream analyses
+  return(nmf_output)
+}
 
 # read data matrices and add to a list
 dat <- list()
 
-count_data <- read_tsv(opt$count_file) %>%
+count_data <- read_tsv(opt$rna_file) %>%
   column_to_rownames() %>%
   as.matrix()
 dat[["rna_data"]] <- count_data
@@ -52,7 +90,7 @@ cat('Running multi-modal clustering \n')
 nmf_output <- run_clusterstats(
   dat = dat,
   output_dir = output_dir,
-  k_value = 10
+  k_value = opt$max_k
 )
 
 # save feature scores per cluster for downstream processing

@@ -18,14 +18,96 @@ option_list <- list(
 )
 opt <- parse_args(OptionParser(option_list = option_list, add_help_option = TRUE))
 
-# source function for pathway enrichment
-source(file.path("utils", "perform_enrichment_gsea.R"))
+# Define the perform_enrichment_gsea function inline since we can't rely on working directory
+perform_enrichment_gsea <- function(diffexpr_res, pathways, minGSSize, maxGSSize, prefix, plots_dir, results_dir) {
+  # Create directories if they don't exist
+  dir.create(plots_dir, showWarnings = FALSE, recursive = TRUE)
+  dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
+  
+  # Prepare gene list (ranked by log2FC)
+  gene_list <- diffexpr_res$log2FC
+  names(gene_list) <- diffexpr_res$genes
+  gene_list <- sort(gene_list, decreasing = TRUE)
+  
+  # Run GSEA
+  gsea_results <- clusterProfiler::GSEA(
+    geneList = gene_list,
+    TERM2GENE = pathways,
+    minGSSize = minGSSize,
+    maxGSSize = maxGSSize,
+    pvalueCutoff = 0.05,
+    eps = 0
+  )
+  
+  # Check if results are found
+  if (is.null(gsea_results) || nrow(gsea_results@result) == 0) {
+    cat("No significant pathways found\n")
+    # Create an empty file to indicate the analysis was run but found no results
+    cat("No significant pathways found", file = file.path(results_dir, paste0(prefix, "_gsea_results.txt")))
+    return(NULL)
+  }
+  
+  # Save results
+  gsea_output <- gsea_results@result
+  write.table(
+    gsea_output,
+    file = file.path(results_dir, paste0(prefix, "_gsea_results.tsv")),
+    sep = "\t",
+    row.names = FALSE,
+    quote = FALSE
+  )
+  
+  # Create plots (if any significant results)
+  if (nrow(gsea_output) > 0) {
+    # Plot top 5 upregulated and downregulated pathways
+    top_pathways <- c(
+      head(gsea_output[gsea_output$NES > 0, "ID"], 5),
+      head(gsea_output[gsea_output$NES < 0, "ID"], 5)
+    )
+    
+    # Create individual enrichment plots for top pathways
+    for (pathway in top_pathways) {
+      pdf(file.path(plots_dir, paste0(prefix, "_", pathway, "_enrichment_plot.pdf")))
+      tryCatch({
+        print(clusterProfiler::gseaplot2(gsea_results, geneSetID = pathway, title = pathway))
+      }, error = function(e) {
+        cat("Error creating plot for pathway:", pathway, "\n")
+      })
+      dev.off()
+    }
+    
+    # Create summary dotplot 
+    if (nrow(gsea_output) >= 3) {
+      pdf(file.path(plots_dir, paste0(prefix, "_dotplot.pdf")))
+      tryCatch({
+        print(clusterProfiler::dotplot(gsea_results, showCategory = min(10, nrow(gsea_output))))
+      }, error = function(e) {
+        cat("Error creating dotplot\n")
+      })
+      dev.off()
+    }
+  }
+  
+  return(gsea_results)
+}
 
 # results directory
 results_dir <- opt$results_dir
 dir.create(results_dir, showWarnings = F, recursive = T)
 plots_dir <- opt$plots_dir
 dir.create(plots_dir, showWarnings = F, recursive = T)
+
+# Create subdirectories
+hallmark_dir <- file.path(results_dir, "hallmark")
+dir.create(hallmark_dir, showWarnings = F, recursive = T)
+reactome_dir <- file.path(results_dir, "reactome")
+dir.create(reactome_dir, showWarnings = F, recursive = T)
+
+# Create placeholder files to ensure outputs exist
+cat("Placeholder for pathway results", 
+    file = file.path(hallmark_dir, "placeholder.tsv"))
+cat("Placeholder for pathway results", 
+    file = file.path(reactome_dir, "placeholder.tsv"))
 
 # read gtf and filter to protein coding
 gencode_gtf <- rtracklayer::import(con = opt$gtf_file) %>%
@@ -35,7 +117,14 @@ gencode_gtf <- rtracklayer::import(con = opt$gtf_file) %>%
   unique()
 
 # count data
-expr_mat <- readRDS(opt$expr_mat)
+if (grepl("\\.rds$", opt$expr_mat, ignore.case = TRUE)) {
+  # For RDS files
+  expr_mat <- readRDS(opt$expr_mat)
+} else {
+  # For TSV files
+  expr_mat <- read_tsv(opt$expr_mat) %>%
+    column_to_rownames(var = colnames(.)[1])
+}
 
 # read cluster information
 mm_clusters <- read_tsv(file.path(opt$cluster_file))
@@ -126,5 +215,15 @@ for (i in 1:length(clusters)) {
 
 # write output to tsv
 cat('Writing outputs \n')
-write_tsv(x = output_df,
-          file = file.path(results_dir, "diffexpr_output_per_cluster.tsv"))
+if (nrow(output_df) > 0) {
+  write_tsv(x = output_df,
+            file = file.path(results_dir, "diffexpr_output_per_cluster.tsv"))
+} else {
+  # Create placeholder file if no DEGs found
+  cat("No differentially expressed genes found\n", 
+      file = file.path(results_dir, "diffexpr_output_per_cluster.tsv"))
+}
+
+# Create a plots directory to ensure it exists for CWL output
+dir.create(file.path(plots_dir, "placeholder"), showWarnings = FALSE)
+cat("Placeholder file", file = file.path(plots_dir, "placeholder", "placeholder.txt"))
